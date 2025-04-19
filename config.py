@@ -21,50 +21,38 @@ translations = {
         "Clue1": "A torn page with cryptic symbols",
         "Clue2": "A glass shard with a strange mark",
         "Clue3": "A note hinting at a secret meeting",
-        "Case Text": "The Alabaster Crown, a priceless artifact from the ancient city of Zafara, vanished from the Grand Museum under mysterious circumstances. Discovered by archaeologist Leila Mansour, it was said to hold secrets of a lost civilization. Security was tight, yet the crown disappeared without a trace during a private exhibit. Rumors swirl of insider involvement, a hidden agenda, or even a collector’s greed. As lead detective, your task is to navigate the web of clues, interrogate suspects, and uncover the truth before the trail goes cold.",
+        "Case Text": "The Alabaster Crown, a priceless artifact from the ancient city of Zafara, vanished from the Grand Museum under mysterious circumstances. Discovered by archaeologist Leila Mansour, it was said to hold secrets of a lost civilization. Security was tight, yet the crown disappeared without a trace during a private exhibit. Rumors swirl of insider involvement, a hidden agenda, or even a collector's greed. As lead detective, your task is to navigate the web of clues, interrogate suspects, and uncover the truth before the trail goes cold.",
         "Suspect1": "Leila",
         "Suspect2": "Sami",
         "Suspect3": "Karim",
         "Suspect1_Intro": "Leila seems nervous, avoiding eye contact.",
         "Suspect2_Intro": "Sami shifts uncomfortably, glancing at the door.",
         "Suspect3_Intro": "Karim maintains a calm smile, but his hands are tense.",
-        "Suspect1_Background": "Leila Mansour, 38, is a renowned archaeologist who unearthed the Alabaster Crown in Zafara. Her career thrives on high-profile discoveries, but colleagues whisper of her obsession with the crown’s supposed mystical properties. She was overseeing its transfer to the museum and had unrestricted access to the exhibit. Recently, she’s been distant, spending late nights in her office studying ancient texts. Her expertise makes her invaluable, but does it also make her a suspect?",
-        "Suspect2_Background": "Sami Al-Rashid, 45, is a museum security guard with 15 years of service. Known for his quiet demeanor, he’s been struggling with a gambling debt that’s spiraled out of control. On the night of the theft, he was stationed near the exhibit but claims he saw nothing unusual. His financial troubles have raised eyebrows, and coworkers note he’s been unusually nervous, often checking his phone during shifts.",
-        "Suspect3_Background": "Karim Haddad, 52, is a wealthy art collector with a penchant for rare antiquities. He attended the private exhibit and openly admired the Alabaster Crown, even inquiring about its market value weeks prior. His collection includes items of questionable origin, and he’s rumored to have connections in the black market. Charismatic but evasive, Karim insists he was merely a guest that night, but his interest in the crown was unmistakable.",
+        "Suspect1_Background": "Leila Mansour, 38, is a renowned archaeologist who unearthed the Alabaster Crown in Zafara. Her career thrives on high-profile discoveries, but colleagues whisper of her obsession with the crown's supposed mystical properties. She was overseeing its transfer to the museum and had unrestricted access to the exhibit. Recently, she's been distant, spending late nights in her office studying ancient texts. Her expertise makes her invaluable, but does it also make her a suspect?",
+        "Suspect2_Background": "Sami Al-Rashid, 45, is a museum security guard with 15 years of service. Known for his quiet demeanor, he's been struggling with a gambling debt that's spiraled out of control. On the night of the theft, he was stationed near the exhibit but claims he saw nothing unusual. His financial troubles have raised eyebrows, and coworkers note he's been unusually nervous, often checking his phone during shifts.",
+        "Suspect3_Background": "Karim Haddad, 52, is a wealthy art collector with a penchant for rare antiquities. He attended the private exhibit and openly admired the Alabaster Crown, even inquiring about its market value weeks prior. His collection includes items of questionable origin, and he's rumored to have connections in the black market. Charismatic but evasive, Karim insists he was merely a guest that night, but his interest in the crown was unmistakable.",
         "Move to the yellow light": "Move to the yellow light",
         "Clue1": "A torn page with cryptic symbols",
         "Clue2": "A glass shard with a strange mark",
         "Clue3": "A note hinting at a secret meeting",
-        "Suspect1_Questions": [
-            "Where were you when the crown was stolen?",
-            "Why were you at the museum so late?",
-            "What do you know about the crown’s symbols?"
-        ],
-        "Suspect1_Responses": [
-            "I was in my office, cataloging artifacts.",
-            "I had to finish some paperwork; it was routine.",
-            "They’re ancient, but I haven’t decoded them yet."
-        ],
-        "Suspect2_Questions": [
-            "What were you doing during the theft?",
-            "Why were your fingerprints on the case?",
-            "Have you been approached by anyone suspicious?"
-        ],
-        "Suspect2_Responses": [
-            "I was on my rounds, nowhere near the exhibit.",
-            "I checked the case earlier, part of my job.",
-            "No, just the usual museum staff."
-        ],
-        "Suspect3_Questions": [
-            "Why were you so interested in the crown?",
-            "Who did you meet before the theft?",
-            "Where were you when the alarms went off?"
-        ],
-        "Suspect3_Responses": [
-            "It’s a beautiful piece, nothing more.",
-            "Just some business contacts, unrelated.",
-            "I was already leaving, didn’t hear them."
-        ]
+        "Question1_Suspect1": "Where were you when the crown was stolen?",
+        "Question2_Suspect1": "Why were you at the museum so late?",
+        "Question3_Suspect1": "What do you know about the crown's symbols?",
+        "Answer1_Suspect1": "I was in my office, cataloging artifacts.",
+        "Answer2_Suspect1": "I had to finish some paperwork; it was routine.",
+        "Answer3_Suspect1": "They're ancient, but I haven't decoded them yet.",
+        "Question1_Suspect2": "What were you doing during the theft?",
+        "Question2_Suspect2": "Why were your fingerprints on the case?",
+        "Question3_Suspect2": "Have you been approached by anyone suspicious?",
+        "Answer1_Suspect2": "I was on my rounds, nowhere near the exhibit.",
+        "Answer2_Suspect2": "I checked the case earlier, part of my job.",
+        "Answer3_Suspect2": "No, just the usual museum staff.",
+        "Question1_Suspect3": "Why were you so interested in the crown?",
+        "Question2_Suspect3": "Who did you meet before the theft?",
+        "Question3_Suspect3": "Where were you when the alarms went off?",
+        "Answer1_Suspect3": "It's a beautiful piece, nothing more.",
+        "Answer2_Suspect3": "Just some business contacts, unrelated.",
+        "Answer3_Suspect3": "I was already leaving, didn't hear them."
     },
     "Arabic": {
         "Start": "ابدأ",
@@ -99,37 +87,24 @@ translations = {
         "Clue1": "صفحة ممزقة برموز غامضة",
         "Clue2": "شظية زجاجية بعلامة غريبة",
         "Clue3": "ملاحظة تشير إلى اجتماع سري",
-        "Suspect1_Questions": [
-            "أين كنتِ عندما سُرق التاج؟",
-            "لماذا كنتِ في المتحف متأخرًا؟",
-            "ماذا تعرفين عن رموز التاج؟"
-        ],
-        "Suspect1_Responses": [
-            "كنتُ في مكتبي، أسجل القطع الأثرية.",
-            "كان عليّ إنهاء بعض الأوراق، أمر روتيني.",
-            "إنها رموز قديمة، لكنني لم أفككها بعد."
-        ],
-        "Suspect2_Questions": [
-            "ماذا كنت تفعل أثناء السرقة؟",
-            "لماذا وُجدت بصماتك على العلبة؟",
-            "هل اقترب منك أحد مشبوه؟"
-        ],
-        "Suspect2_Responses": [
-            "كنت في جولاتي، بعيدًا عن المعرض.",
-            "فحصت العلبة في وقت سابق، جزء من عملي.",
-            "لا، فقط موظفو المتحف المعتادون."
-        ],
-        "Suspect3_Questions": [
-            "لماذا كنت مهتمًا جدًا بالتاج؟",
-            "من التقيت قبل السرقة؟",
-            "أين كنت عندما انطلقت الأجهزة الإنذارية؟"
-        ],
-        "Suspect3_Responses": [
-            "إنه قطعة رائعة، لا أكثر.",
-            "فقط بعض جهات الاتصال التجارية، لا علاقة لها.",
-            "كنت أغادر بالفعل، لم أسمعها."
-        ]
-        
+        "Question1_Suspect1": "أين كنتِ عندما سُرق التاج؟",
+        "Question2_Suspect1": "لماذا كنتِ في المتحف متأخرًا؟",
+        "Question3_Suspect1": "ماذا تعرفين عن رموز التاج؟",
+        "Answer1_Suspect1": "كنتُ في مكتبي، أسجل القطع الأثرية.",
+        "Answer2_Suspect1": "كان عليّ إنهاء بعض الأوراق، أمر روتيني.",
+        "Answer3_Suspect1": "إنها رموز قديمة، لكنني لم أفككها بعد.",
+        "Question1_Suspect2": "ماذا كنت تفعل أثناء السرقة؟",
+        "Question2_Suspect2": "لماذا وُجدت بصماتك على العلبة؟",
+        "Question3_Suspect2": "هل اقترب منك أحد مشبوه؟",
+        "Answer1_Suspect2": "كنت في جولاتي، بعيدًا عن المعرض.",
+        "Answer2_Suspect2": "فحصت العلبة في وقت سابق، جزء من عملي.",
+        "Answer3_Suspect2": "لا، فقط موظفو المتحف المعتادون.",
+        "Question1_Suspect3": "لماذا كنت مهتمًا جدًا بالتاج؟",
+        "Question2_Suspect3": "من التقيت قبل السرقة؟",
+        "Answer3_Suspect3": "أين كنت عندما انطلقت الأجهزة الإنذارية؟",
+        "Answer1_Suspect3": "إنه قطعة رائعة، لا أكثر.",
+        "Answer2_Suspect3": "فقط بعض جهات الاتصال التجارية، لا علاقة لها.",
+        "Answer3_Suspect3": "كنت أغادر بالفعل، لم أسمعها."
     }
 }
 

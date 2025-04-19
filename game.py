@@ -253,6 +253,102 @@ def new_view(screen, points, found_clues, language):
 
     return points, found_clues, False
 
+def evidence_board_view(screen, language, found_clues):
+    WIDTH, HEIGHT = screen.get_size()
+    font = pygame.font.Font(None, 36)
+    title_font = pygame.font.Font(None, 48)
+    content_font = pygame.font.Font(None, 32)  # Slightly smaller font for content
+    
+    # Create semi-transparent overlay
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))  # Black with 70% opacity
+    
+    # Create evidence board background
+    board_bg = pygame.Surface((WIDTH - 200, HEIGHT - 200), pygame.SRCALPHA)
+    board_bg.fill((30, 30, 30, 200))  # Dark gray with 80% opacity
+    board_rect = board_bg.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    
+    # Evidence card properties
+    card_width = 350  # Increased width for better text spacing
+    card_height = 250  # Increased height for better text spacing
+    card_spacing = 50  # Increased spacing between cards
+    cards_per_row = 2
+    start_x = board_rect.x + (board_rect.width - (cards_per_row * card_width + (cards_per_row - 1) * card_spacing)) // 2
+    start_y = board_rect.y + 100
+    
+    # Create evidence cards
+    evidence_cards = []
+    for i, clue in enumerate(found_clues):
+        row = i // cards_per_row
+        col = i % cards_per_row
+        x = start_x + col * (card_width + card_spacing)
+        y = start_y + row * (card_height + card_spacing)
+        
+        # Create card surface with opacity
+        card = pygame.Surface((card_width, card_height), pygame.SRCALPHA)
+        card.fill((50, 50, 50, 200))  # Semi-transparent dark gray
+        
+        # Add subtle border
+        pygame.draw.rect(card, (100, 100, 100, 150), (0, 0, card_width, card_height), 2, border_radius=10)
+        
+        # Add evidence text with proper spacing
+        title = font.render(translations[language][f"Clue{i+1}_Title"], True, (255, 255, 255))
+        content = content_font.render(translations[language][f"Clue{i+1}"], True, (200, 200, 200))
+        
+        # Center text on card with proper spacing
+        title_rect = title.get_rect(center=(card_width // 2, 50))
+        content_rect = content.get_rect(center=(card_width // 2, card_height // 2))
+        
+        # Add text with padding
+        card.blit(title, title_rect)
+        card.blit(content, content_rect)
+        
+        evidence_cards.append({
+            'surface': card,
+            'rect': pygame.Rect(x, y, card_width, card_height)
+        })
+    
+    back_button = pygame.Rect(0, 0, 200, 60)
+    back_button.center = (WIDTH // 2, HEIGHT - 100)
+    
+    running = True
+    clock = pygame.time.Clock()
+
+    while running:
+        # Draw background and overlay
+        screen.blit(pygame.transform.scale(detective_bg1, (WIDTH, HEIGHT)), (0, 0))
+        screen.blit(overlay, (0, 0))
+        screen.blit(board_bg, board_rect)
+        
+        # Draw title
+        title_text = title_font.render(translations[language]["Evidence Board"], True, WHITE)
+        screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, board_rect.y + 50)))
+        
+        # Draw evidence cards
+        for card in evidence_cards:
+            screen.blit(card['surface'], card['rect'])
+            
+            # Add hover effect
+            if card['rect'].collidepoint(pygame.mouse.get_pos()):
+                hover_glow = pygame.Surface((card_width + 20, card_height + 20), pygame.SRCALPHA)
+                hover_glow.fill((255, 255, 255, 30))
+                screen.blit(hover_glow, (card['rect'].x - 10, card['rect'].y - 10))
+        
+        # Draw back button
+        draw_button(screen, back_button, BLUE, BLUE_HOVER, translations[language]["Return to Map"], font, pygame.mouse.get_pos())
+        
+        pygame.display.flip()
+        clock.tick(60)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.collidepoint(event.pos):
+                    return
+
 def suspect_background_view(screen, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 28)
@@ -261,11 +357,62 @@ def suspect_background_view(screen, language):
     suspect_rects = [pygame.Rect(x, y, 70, 100) for x, y in suspect_positions]
     back_button = pygame.Rect(0, 0, 200, 60)
     back_button.center = (WIDTH // 2, HEIGHT - 100)
+    
+    # Add interrogation buttons
+    question_buttons = [
+        pygame.Rect(WIDTH // 4, HEIGHT // 3, 300, 50),
+        pygame.Rect(WIDTH // 4, HEIGHT // 3 + 70, 300, 50),
+        pygame.Rect(WIDTH // 4, HEIGHT // 3 + 140, 300, 50)
+    ]
+    
+    # Questions for each suspect
+    questions = {
+        0: [
+            translations[language]["Question1_Suspect1"],
+            translations[language]["Question2_Suspect1"],
+            translations[language]["Question3_Suspect1"]
+        ],
+        1: [
+            translations[language]["Question1_Suspect2"],
+            translations[language]["Question2_Suspect2"],
+            translations[language]["Question3_Suspect2"]
+        ],
+        2: [
+            translations[language]["Question1_Suspect3"],
+            translations[language]["Question2_Suspect3"],
+            translations[language]["Question3_Suspect3"]
+        ]
+    }
+    
+    # Answers for each suspect
+    answers = {
+        0: [
+            translations[language]["Answer1_Suspect1"],
+            translations[language]["Answer2_Suspect1"],
+            translations[language]["Answer3_Suspect1"]
+        ],
+        1: [
+            translations[language]["Answer1_Suspect2"],
+            translations[language]["Answer2_Suspect2"],
+            translations[language]["Answer3_Suspect2"]
+        ],
+        2: [
+            translations[language]["Answer1_Suspect3"],
+            translations[language]["Answer2_Suspect3"],
+            translations[language]["Answer3_Suspect3"]
+        ]
+    }
+    
+    selected_suspect = None
+    current_question = None
+    answer_text = None
+    answer_timer = 0
+    answer_alpha = 255
     running = True
     clock = pygame.time.Clock()
 
     print("Entered suspect_background_view")
-    text_to_speech("Explore the suspect backgrounds.", language)
+    text_to_speech("Explore the suspect backgrounds and interrogate them.", language)
     pygame.event.clear()  # Clear stale events
 
     while running:
@@ -273,12 +420,32 @@ def suspect_background_view(screen, language):
         title_text = title_font.render(translations[language]["Explore Suspect Background"], True, WHITE)
         screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, 50)))
 
+        # Draw suspects
         for i, pos in enumerate(suspect_positions):
             screen.blit(pygame.transform.scale(suspect_image, (70, 100)), pos)
             suspect_text = font.render(translations[language][f"Suspect{i+1}"], True, WHITE)
             screen.blit(suspect_text, suspect_text.get_rect(center=(pos[0] + 35, pos[1] + 115)))
             background_text = font.render(translations[language][f"Suspect{i+1}_Background"], True, YELLOW)
             screen.blit(background_text, background_text.get_rect(center=(pos[0] + 35, pos[1] + 150)))
+
+        # Draw question buttons if suspect is selected
+        if selected_suspect is not None:
+            for i, button in enumerate(question_buttons):
+                hover = button.collidepoint(pygame.mouse.get_pos())
+                color = BLUE_HOVER if hover else BLUE
+                pygame.draw.rect(screen, color, button, border_radius=5)
+                question_text = font.render(questions[selected_suspect][i], True, WHITE)
+                screen.blit(question_text, question_text.get_rect(center=button.center))
+
+        # Draw answer if there is one
+        if answer_text and answer_timer > 0:
+            answer_surface = font.render(answer_text, True, WHITE)
+            answer_surface.set_alpha(answer_alpha)
+            answer_rect = answer_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+            pygame.draw.rect(screen, DARK_GRAY, answer_rect.inflate(20, 20), border_radius=10)
+            screen.blit(answer_surface, answer_rect)
+            answer_alpha = max(answer_alpha - 2, 0)
+            answer_timer -= 1
 
         draw_button(screen, back_button, BLUE, BLUE_HOVER, translations[language]["Return to Map"], font, pygame.mouse.get_pos())
 
@@ -296,6 +463,26 @@ def suspect_background_view(screen, language):
                 if back_button.collidepoint(event.pos):
                     print("Returning to new_view from back_button")
                     return
+                
+                # Check if a suspect was clicked
+                for i, rect in enumerate(suspect_rects):
+                    if rect.collidepoint(event.pos):
+                        selected_suspect = i
+                        print(f"Selected suspect {i+1}")
+                        text_to_speech(f"Selected suspect {i+1}. What would you like to ask?", language)
+                        break
+                
+                # Check if a question was clicked
+                if selected_suspect is not None:
+                    for i, button in enumerate(question_buttons):
+                        if button.collidepoint(event.pos):
+                            current_question = i
+                            answer_text = answers[selected_suspect][i]
+                            answer_timer = 120
+                            answer_alpha = 255
+                            print(f"Asked question {i+1} to suspect {selected_suspect+1}")
+                            text_to_speech(answer_text, language)
+                            break
 
 def hall_view(screen, points, language, pin_index):
     WIDTH, HEIGHT = screen.get_size()
@@ -359,6 +546,16 @@ def puzzle_view_1(screen, points, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     clue_font = pygame.font.Font(None, 48)
+    
+    # Create a semi-transparent overlay
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))  # Black with 70% opacity
+    
+    # Create puzzle background
+    puzzle_bg = pygame.Surface((300, 300), pygame.SRCALPHA)
+    puzzle_bg.fill((30, 30, 30, 200))  # Dark gray with 80% opacity
+    puzzle_bg_rect = puzzle_bg.get_rect(center=(WIDTH//2, HEIGHT//2))
+    
     grid = [[None for _ in range(3)] for _ in range(3)]
     cell_rects = [pygame.Rect(WIDTH // 2 - 90 + x * 60, HEIGHT // 2 - 90 + y * 60, 50, 50) for y in range(3) for x in range(3)]
     message_text = None
@@ -389,16 +586,36 @@ def puzzle_view_1(screen, points, language):
     text_to_speech("Get three X's in a row to unlock the clue.", language)
 
     while running:
+        # Draw background and overlay
         screen.blit(pygame.transform.scale(new_background_image, (WIDTH, HEIGHT)), (0, 0))
+        screen.blit(overlay, (0, 0))
+        screen.blit(puzzle_bg, puzzle_bg_rect)
+        
+        # Draw grid lines
+        for i in range(4):
+            # Vertical lines
+            pygame.draw.line(screen, (100, 100, 100), 
+                           (WIDTH//2 - 90 + i*60, HEIGHT//2 - 90),
+                           (WIDTH//2 - 90 + i*60, HEIGHT//2 + 90), 2)
+            # Horizontal lines
+            pygame.draw.line(screen, (100, 100, 100),
+                           (WIDTH//2 - 90, HEIGHT//2 - 90 + i*60),
+                           (WIDTH//2 + 90, HEIGHT//2 - 90 + i*60), 2)
+        
         for i, rect in enumerate(cell_rects):
             x, y = i % 3, i // 3
-            pygame.draw.rect(screen, WHITE, rect, border_radius=5)
+            # Draw cell background
+            cell_bg = pygame.Surface((50, 50), pygame.SRCALPHA)
+            cell_bg.fill((50, 50, 50, 200))  # Dark gray with 80% opacity
+            screen.blit(cell_bg, rect)
+            
             if grid[y][x] == 'X':
                 text = font.render('X', True, BLUE)
                 screen.blit(text, text.get_rect(center=rect.center))
             elif grid[y][x] == 'O':
                 text = font.render('O', True, RED)
                 screen.blit(text, text.get_rect(center=rect.center))
+        
         screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150)))
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
         points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
@@ -459,6 +676,16 @@ def puzzle_view_2(screen, points, language):
         scaled_pin = pygame.transform.scale(pin_image, (50, 50))
         font = pygame.font.Font(None, 36)
         clue_font = pygame.font.Font(None, 48)
+        
+        # Create a semi-transparent overlay
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))  # Black with 70% opacity
+        
+        # Create puzzle background
+        puzzle_bg = pygame.Surface((300, 300), pygame.SRCALPHA)
+        puzzle_bg.fill((30, 30, 30, 200))  # Dark gray with 80% opacity
+        puzzle_bg_rect = puzzle_bg.get_rect(center=(WIDTH//2, HEIGHT//2))
+        
         grid = [
             [1, 2, 3, 4],
             [5, 6, 7, 8],
@@ -494,16 +721,38 @@ def puzzle_view_2(screen, points, language):
 
         while running:
             try:
+                # Draw background and overlay
                 screen.blit(scaled_background, (0, 0))
+                screen.blit(overlay, (0, 0))
+                screen.blit(puzzle_bg, puzzle_bg_rect)
+                
+                # Draw grid lines
+                for i in range(5):
+                    # Vertical lines
+                    pygame.draw.line(screen, (100, 100, 100), 
+                                   (WIDTH//2 - 120 + i*60, HEIGHT//2 - 120),
+                                   (WIDTH//2 - 120 + i*60, HEIGHT//2 + 120), 2)
+                    # Horizontal lines
+                    pygame.draw.line(screen, (100, 100, 100),
+                                   (WIDTH//2 - 120, HEIGHT//2 - 120 + i*60),
+                                   (WIDTH//2 + 120, HEIGHT//2 - 120 + i*60), 2)
+                
+                # Draw tiles
                 for i, rect in enumerate(tile_rects):
                     x, y = i % 4, i // 4
                     if grid[y][x] is not None:
+                        # Draw tile background
+                        tile_bg = pygame.Surface((50, 50), pygame.SRCALPHA)
+                        tile_bg.fill((50, 50, 50, 200))  # Dark gray with 80% opacity
+                        screen.blit(tile_bg, rect)
+                        
                         if grid[y][x] == 15:
                             screen.blit(scaled_pin, rect)
                         else:
-                            pygame.draw.rect(screen, BLUE, rect, border_radius=5)
                             text = font.render(str(grid[y][x]), True, WHITE)
                             screen.blit(text, text.get_rect(center=rect.center))
+                
+                # Draw instruction and hint
                 screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 180)))
                 screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
                 points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
@@ -566,45 +815,81 @@ def puzzle_view_3(screen, points, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     clue_font = pygame.font.Font(None, 48)
-    pieces = [
-        {'rect': pygame.Rect(WIDTH // 2 - 150, HEIGHT // 2 - 100, 50, 50), 'pos': (0, 0)},
-        {'rect': pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2 - 100, 50, 50), 'pos': (1, 0)},
-        {'rect': pygame.Rect(WIDTH // 2 + 50, HEIGHT // 2 - 100, 50, 50), 'pos': (2, 0)},
-        {'rect': pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 50, 50), 'pos': (1, 1)},
-        {'rect': pygame.Rect(WIDTH // 2, HEIGHT // 2, 50, 50), 'pos': (2, 1)}
-    ]
-    target_positions = [(x, y) for y in range(2) for x in range(3) if not (y == 1 and x == 0)]
-    correct_positions = [(0, 0), (1, 0), (2, 0), (1, 1), (2, 1)]
-    selected_piece = None
+    
+    # Create a semi-transparent overlay
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))  # Black with 70% opacity
+    
+    # Create puzzle background
+    puzzle_bg = pygame.Surface((400, 400), pygame.SRCALPHA)
+    puzzle_bg.fill((30, 30, 30, 200))  # Dark gray with 80% opacity
+    puzzle_bg_rect = puzzle_bg.get_rect(center=(WIDTH//2, HEIGHT//2))
+    
+    # Memory game setup
+    symbols = ['!', '@', '#', '$', '%', '&', '*', '+']
+    pairs = symbols * 2  # Create pairs
+    random.shuffle(pairs)
+    
+    # Create 4x4 grid of cards
+    cards = []
+    card_size = 80
+    card_spacing = 20
+    start_x = WIDTH // 2 - (4 * (card_size + card_spacing)) // 2
+    start_y = HEIGHT // 2 - (4 * (card_size + card_spacing)) // 2
+    
+    for i in range(16):
+        row = i // 4
+        col = i % 4
+        x = start_x + col * (card_size + card_spacing)
+        y = start_y + row * (card_size + card_spacing)
+        cards.append({
+            'rect': pygame.Rect(x, y, card_size, card_size),
+            'symbol': pairs[i],
+            'flipped': False,
+            'matched': False
+        })
+    
+    # Game state
+    first_card = None
+    second_card = None
+    can_flip = True
+    matched_pairs = 0
     message_text = None
     message_timer = 0
     message_alpha = 255
     puzzle_solved = False
     hint = get_smart_hint([], points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, YELLOW)
-    instruction = font.render("Arrange pieces to form image", True, WHITE)
+    instruction = font.render("Match all pairs to unlock the clue", True, WHITE)
     running = True
     clock = pygame.time.Clock()
 
-    def is_solved():
-        return all(piece['pos'] == correct_positions[i] for i, piece in enumerate(pieces))
-
-    text_to_speech("Arrange the pieces to form a complete image to unlock the clue.", language)
+    text_to_speech("Match all pairs of symbols to unlock the clue.", language)
 
     while running:
+        # Draw background and overlay
         screen.blit(pygame.transform.scale(new_background_image, (WIDTH, HEIGHT)), (0, 0))
-        target_rects = [pygame.Rect(WIDTH // 2 - 90 + x * 60, HEIGHT // 2 - 60 + y * 60, 50, 50) for y in range(2) for x in range(3) if not (y == 1 and x == 0)]
-        for rect in target_rects:
-            pygame.draw.rect(screen, LIGHT_GRAY, rect, 2, border_radius=5)
-        for i, piece in enumerate(pieces):
-            x, y = piece['pos']
-            src_rect = pygame.Rect(x * 35, y * 50, 35, 50)
-            screen.blit(pygame.transform.scale(suspect_image, (105, 100)), piece['rect'], src_rect)
-            pygame.draw.rect(screen, BLUE, piece['rect'], 2, border_radius=5)
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150)))
+        screen.blit(overlay, (0, 0))
+        screen.blit(puzzle_bg, puzzle_bg_rect)
+        
+        # Draw instruction and hint
+        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 200)))
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
         points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
+
+        # Draw cards
+        for card in cards:
+            if not card['matched']:
+                if card['flipped']:
+                    # Draw flipped card with symbol
+                    pygame.draw.rect(screen, WHITE, card['rect'], border_radius=10)
+                    symbol_text = font.render(card['symbol'], True, BLACK)
+                    screen.blit(symbol_text, symbol_text.get_rect(center=card['rect'].center))
+                else:
+                    # Draw face-down card
+                    pygame.draw.rect(screen, BLUE, card['rect'], border_radius=10)
+                    pygame.draw.rect(screen, BLUE_HOVER, card['rect'].inflate(-10, -10), border_radius=10)
 
         if message_text and message_timer > 0:
             message_surface = clue_font.render(message_text, True, WHITE)
@@ -619,39 +904,45 @@ def puzzle_view_3(screen, points, language):
 
         pygame.display.flip()
         clock.tick(60)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return points, False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for i, piece in enumerate(pieces):
-                    if piece['rect'].collidepoint(event.pos):
-                        selected_piece = i
-                        break
-            elif event.type == pygame.MOUSEBUTTONUP and selected_piece is not None:
-                for i, target in enumerate(target_rects):
-                    if target.collidepoint(event.pos):
-                        target_pos = target_positions[i]
-                        for other_piece in pieces:
-                            if other_piece['pos'] == target_pos and other_piece != pieces[selected_piece]:
-                                other_piece['pos'], pieces[selected_piece]['pos'] = pieces[selected_piece]['pos'], other_piece['pos']
-                                other_piece['rect'].center = target.center
-                                pieces[selected_piece]['rect'].center = target.center
-                                break
+            elif event.type == pygame.MOUSEBUTTONDOWN and can_flip and not puzzle_solved:
+                for card in cards:
+                    if not card['matched'] and not card['flipped'] and card['rect'].collidepoint(event.pos):
+                        card['flipped'] = True
+                        
+                        if first_card is None:
+                            first_card = card
                         else:
-                            pieces[selected_piece]['pos'] = target_pos
-                            pieces[selected_piece]['rect'].center = target.center
-                        if is_solved():
-                            points += 10
-                            message_text = "Access Granted"
-                            message_timer = 120
-                            puzzle_solved = True
-                            text_to_speech("Access granted. Entering the room.", language)
+                            second_card = card
+                            can_flip = False
+                            
+                            # Check for match
+                            if first_card['symbol'] == second_card['symbol']:
+                                first_card['matched'] = True
+                                second_card['matched'] = True
+                                matched_pairs += 1
+                                
+                                if matched_pairs == 8:  # All pairs matched
+                                    points += 10
+                                    message_text = "Access Granted"
+                                    message_timer = 120
+                                    puzzle_solved = True
+                                    text_to_speech("Access granted. Entering the room.", language)
+                            else:
+                                # No match, flip cards back after delay
+                                pygame.time.delay(1000)
+                                first_card['flipped'] = False
+                                second_card['flipped'] = False
+                            
+                            first_card = None
+                            second_card = None
+                            can_flip = True
                         break
-                selected_piece = None
-            elif event.type == pygame.MOUSEMOTION and selected_piece is not None:
-                pieces[selected_piece]['rect'].move_ip(event.rel)
 
     return points, False
 
@@ -659,24 +950,41 @@ def pin_view_1(screen, points, found_clues, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     clue_font = pygame.font.Font(None, 48)
-    click_count = 0
-    max_clicks = 3
-    message_text = None
-    message_timer = 0
-    message_alpha = 255
-    clue_found = False
+    
+    # Create logbook surface
     logbook = pygame.Surface((60, 80), pygame.SRCALPHA)
     logbook.fill((139, 69, 19))
     pygame.draw.rect(logbook, BLACK, (0, 0, 60, 80), 2)
     pygame.draw.line(logbook, WHITE, (10, 20), (50, 20), 2)
     pygame.draw.line(logbook, WHITE, (10, 40), (50, 40), 2)
+    
+    # Logbook properties - random position in top right quadrant
+    logbook_rect = logbook.get_rect(center=(
+        random.randint(WIDTH // 2 + 100, WIDTH - 100),
+        random.randint(100, HEIGHT // 2 - 100)
+    ))
+    pulse_speed = 0.05
+    pulse_phase = 0
+    glow_radius = 0
+    max_glow = 30
+    glow_speed = 0.5
+    glow_alpha = 0
+    fade_in_time = 0
+    max_fade_in = 300  # 5 seconds at 60 FPS
+    search_time = 0
+    hint_alpha = 0
+    
+    message_text = None
+    message_timer = 0
+    message_alpha = 255
+    clue_found = False
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, YELLOW)
-    instruction = font.render("Click 3 times to find the clue", True, WHITE)
+    instruction = font.render("Search for the hidden logbook...", True, WHITE)
     running = True
     clock = pygame.time.Clock()
 
-    text_to_speech("Click three times to find the clue.", language)
+    text_to_speech("Search for the hidden logbook to find the clue.", language)
 
     while running:
         screen.blit(pygame.transform.scale(detective_bg1, (WIDTH, HEIGHT)), (0, 0))
@@ -684,6 +992,42 @@ def pin_view_1(screen, points, found_clues, language):
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
         points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
+
+        if not clue_found:
+            # Update fade in and search time
+            search_time += 1
+            if search_time > 180:  # 3 seconds before starting to fade in
+                fade_in_time = min(fade_in_time + 1, max_fade_in)
+                fade_ratio = fade_in_time / max_fade_in
+                
+                # Update pulse and glow effects
+                pulse_phase += pulse_speed
+                glow_radius = int((math.sin(pulse_phase) + 1) * max_glow / 2 * fade_ratio)
+                glow_alpha = int((math.sin(pulse_phase) + 1) * 127.5 * fade_ratio)
+                
+                # Create glow effect
+                glow_surface = pygame.Surface((60 + glow_radius * 2, 80 + glow_radius * 2), pygame.SRCALPHA)
+                glow_surface.fill((0, 0, 0, 0))
+                pygame.draw.rect(glow_surface, (255, 255, 0, glow_alpha), 
+                               (glow_radius, glow_radius, 60, 80), 
+                               border_radius=5)
+                
+                # Draw glow
+                screen.blit(glow_surface, (logbook_rect.x - glow_radius, logbook_rect.y - glow_radius))
+                
+                # Draw logbook with pulsing scale
+                scale = 1 + math.sin(pulse_phase) * 0.1
+                scaled_logbook = pygame.transform.scale(logbook, 
+                    (int(60 * scale), int(80 * scale)))
+                scaled_rect = scaled_logbook.get_rect(center=logbook_rect.center)
+                scaled_logbook.set_alpha(int(255 * fade_ratio))
+                screen.blit(scaled_logbook, scaled_rect)
+
+            # Show subtle hint after some time
+            if search_time > 360 and not clue_found:  # 6 seconds
+                hint_alpha = min(hint_alpha + 1, 100)
+                hint_surface = font.render("Look around the center of the screen...", True, (255, 255, 255, hint_alpha))
+                screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 150)))
 
         if message_text and message_timer > 0:
             message_surface = clue_font.render(message_text, True, WHITE)
@@ -707,9 +1051,7 @@ def pin_view_1(screen, points, found_clues, language):
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return points, found_clues
             elif event.type == pygame.MOUSEBUTTONDOWN and not clue_found:
-                click_count += 1
-                print(f"pin_view_1: click_count = {click_count}")
-                if click_count >= max_clicks and "clue1" not in found_clues:
+                if logbook_rect.collidepoint(event.pos) and fade_in_time > 0:
                     points += 10
                     found_clues.append("clue1")
                     message_text = translations[language]["Clue1"]
@@ -722,31 +1064,87 @@ def pin_view_2(screen, points, found_clues, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     clue_font = pygame.font.Font(None, 48)
+    
+    # Create glass shard surface
     glass = pygame.Surface((50, 70), pygame.SRCALPHA)
     pygame.draw.polygon(glass, (173, 216, 230), [(25, 0), (50, 20), (40, 70), (10, 70), (0, 20)])
-    glass_rect = pygame.Rect(WIDTH // 2 - 25, HEIGHT // 2 - 100, 50, 70)
-    target_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2 + 50, 100, 100)
+    
+    # Glass properties - random position in left side
+    glass_rect = glass.get_rect(center=(
+        random.randint(100, WIDTH // 2 - 100),
+        random.randint(HEIGHT // 4, 3 * HEIGHT // 4)
+    ))
+    pulse_speed = 0.05
+    pulse_phase = 0
+    glow_radius = 0
+    max_glow = 40
+    glow_speed = 0.5
+    glow_alpha = 0
+    rotation_angle = 0
+    fade_in_time = 0
+    max_fade_in = 300  # 5 seconds at 60 FPS
+    search_time = 0
+    hint_alpha = 0
+    
     message_text = None
     message_timer = 0
     message_alpha = 255
     clue_found = False
-    drag_offset = None
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, YELLOW)
-    instruction = font.render("Drag the shard to the target", True, WHITE)
+    instruction = font.render("Search for the hidden glass shard...", True, WHITE)
     running = True
     clock = pygame.time.Clock()
 
-    text_to_speech("Drag the shard to the target to find the clue.", language)
+    text_to_speech("Search for the hidden glass shard to find the clue.", language)
 
     while running:
         screen.blit(pygame.transform.scale(detective_bg2, (WIDTH, HEIGHT)), (0, 0))
-        pygame.draw.rect(screen, LIGHT_GRAY, target_rect, border_radius=10)
-        screen.blit(glass, glass_rect)
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150)))
+        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
         points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
+
+        if not clue_found:
+            # Update fade in and search time
+            search_time += 1
+            if search_time > 180:  # 3 seconds before starting to fade in
+                fade_in_time = min(fade_in_time + 1, max_fade_in)
+                fade_ratio = fade_in_time / max_fade_in
+                
+                # Update pulse and glow effects
+                pulse_phase += pulse_speed
+                glow_radius = int((math.sin(pulse_phase) + 1) * max_glow / 2 * fade_ratio)
+                glow_alpha = int((math.sin(pulse_phase) + 1) * 127.5 * fade_ratio)
+                rotation_angle = math.sin(pulse_phase * 2) * 15 * fade_ratio
+                
+                # Create glow effect
+                glow_surface = pygame.Surface((50 + glow_radius * 2, 70 + glow_radius * 2), pygame.SRCALPHA)
+                glow_surface.fill((0, 0, 0, 0))
+                pygame.draw.polygon(glow_surface, (173, 216, 230, glow_alpha), 
+                                  [(25 + glow_radius, glow_radius), 
+                                   (50 + glow_radius, 20 + glow_radius),
+                                   (40 + glow_radius, 70 + glow_radius),
+                                   (10 + glow_radius, 70 + glow_radius),
+                                   (glow_radius, 20 + glow_radius)])
+                
+                # Draw glow
+                screen.blit(glow_surface, (glass_rect.x - glow_radius, glass_rect.y - glow_radius))
+                
+                # Draw glass with rotation and scaling
+                scale = 1 + math.sin(pulse_phase) * 0.1
+                rotated_glass = pygame.transform.rotate(glass, rotation_angle)
+                scaled_glass = pygame.transform.scale(rotated_glass, 
+                    (int(50 * scale), int(70 * scale)))
+                scaled_rect = scaled_glass.get_rect(center=glass_rect.center)
+                scaled_glass.set_alpha(int(255 * fade_ratio))
+                screen.blit(scaled_glass, scaled_rect)
+
+            # Show subtle hint after some time
+            if search_time > 360 and not clue_found:  # 6 seconds
+                hint_alpha = min(hint_alpha + 1, 100)
+                hint_surface = font.render("Look for something sparkling in the center...", True, (255, 255, 255, hint_alpha))
+                screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 150)))
 
         if message_text and message_timer > 0:
             message_surface = clue_font.render(message_text, True, WHITE)
@@ -769,45 +1167,55 @@ def pin_view_2(screen, points, found_clues, language):
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return points, found_clues
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if glass_rect.collidepoint(event.pos):
-                    drag_offset = (event.pos[0] - glass_rect.x, event.pos[1] - glass_rect.y)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if drag_offset and glass_rect.colliderect(target_rect) and "clue2" not in found_clues:
+            elif event.type == pygame.MOUSEBUTTONDOWN and not clue_found:
+                if glass_rect.collidepoint(event.pos) and fade_in_time > 0:
                     points += 10
                     found_clues.append("clue2")
                     message_text = translations[language]["Clue2"]
                     message_timer = 120
                     clue_found = True
                     text_to_speech(message_text, language)
-                drag_offset = None
-                glass_rect.center = (WIDTH // 2, HEIGHT // 2 - 65)
-            elif event.type == pygame.MOUSEMOTION and drag_offset:
-                glass_rect.x = event.pos[0] - drag_offset[0]
-                glass_rect.y = event.pos[1] - drag_offset[1]
     return points, found_clues
 
 def pin_view_3(screen, points, found_clues, language):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     clue_font = pygame.font.Font(None, 48)
-    click_count = 0
-    max_clicks = 2
-    message_text = None
-    message_timer = 0
-    message_alpha = 255
-    clue_found = False
+    
+    # Create note surface
     note = pygame.Surface((70, 50), pygame.SRCALPHA)
     note.fill((245, 245, 220))
     pygame.draw.rect(note, BLACK, (0, 0, 70, 50), 2)
     pygame.draw.line(note, BLACK, (10, 25), (60, 25), 1)
+    
+    # Note properties - random position in bottom area
+    note_rect = note.get_rect(center=(
+        random.randint(WIDTH // 4, 3 * WIDTH // 4),
+        random.randint(HEIGHT // 2 + 100, HEIGHT - 100)
+    ))
+    pulse_speed = 0.05
+    pulse_phase = 0
+    glow_radius = 0
+    max_glow = 35
+    glow_speed = 0.5
+    glow_alpha = 0
+    wave_offset = 0
+    fade_in_time = 0
+    max_fade_in = 300  # 5 seconds at 60 FPS
+    search_time = 0
+    hint_alpha = 0
+    
+    message_text = None
+    message_timer = 0
+    message_alpha = 255
+    clue_found = False
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, YELLOW)
-    instruction = font.render("Click 2 times to find the clue", True, WHITE)
+    instruction = font.render("Search for the hidden note...", True, WHITE)
     running = True
     clock = pygame.time.Clock()
 
-    text_to_speech("Click two times to find the clue.", language)
+    text_to_speech("Search for the hidden note to find the clue.", language)
 
     while running:
         screen.blit(pygame.transform.scale(detective_bg3, (WIDTH, HEIGHT)), (0, 0))
@@ -815,6 +1223,43 @@ def pin_view_3(screen, points, found_clues, language):
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
         points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
+
+        if not clue_found:
+            # Update fade in and search time
+            search_time += 1
+            if search_time > 180:  # 3 seconds before starting to fade in
+                fade_in_time = min(fade_in_time + 1, max_fade_in)
+                fade_ratio = fade_in_time / max_fade_in
+                
+                # Update pulse and glow effects
+                pulse_phase += pulse_speed
+                glow_radius = int((math.sin(pulse_phase) + 1) * max_glow / 2 * fade_ratio)
+                glow_alpha = int((math.sin(pulse_phase) + 1) * 127.5 * fade_ratio)
+                wave_offset = math.sin(pulse_phase * 1.5) * 20 * fade_ratio
+                
+                # Create glow effect
+                glow_surface = pygame.Surface((70 + glow_radius * 2, 50 + glow_radius * 2), pygame.SRCALPHA)
+                glow_surface.fill((0, 0, 0, 0))
+                pygame.draw.rect(glow_surface, (255, 255, 255, glow_alpha), 
+                               (glow_radius, glow_radius, 70, 50), 
+                               border_radius=5)
+                
+                # Draw glow
+                screen.blit(glow_surface, (note_rect.x - glow_radius, note_rect.y - glow_radius))
+                
+                # Draw note with floating effect
+                scale = 1 + math.sin(pulse_phase) * 0.1
+                scaled_note = pygame.transform.scale(note, 
+                    (int(70 * scale), int(50 * scale)))
+                scaled_rect = scaled_note.get_rect(center=(note_rect.centerx, note_rect.centery + wave_offset))
+                scaled_note.set_alpha(int(255 * fade_ratio))
+                screen.blit(scaled_note, scaled_rect)
+
+            # Show subtle hint after some time
+            if search_time > 360 and not clue_found:  # 6 seconds
+                hint_alpha = min(hint_alpha + 1, 100)
+                hint_surface = font.render("Look for something floating in the center...", True, (255, 255, 255, hint_alpha))
+                screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 150)))
 
         if message_text and message_timer > 0:
             message_surface = clue_font.render(message_text, True, WHITE)
@@ -838,9 +1283,7 @@ def pin_view_3(screen, points, found_clues, language):
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return points, found_clues
             elif event.type == pygame.MOUSEBUTTONDOWN and not clue_found:
-                click_count += 1
-                print(f"pin_view_3: click_count = {click_count}")
-                if click_count >= max_clicks and "clue3" not in found_clues:
+                if note_rect.collidepoint(event.pos) and fade_in_time > 0:
                     points += 10
                     found_clues.append("clue3")
                     message_text = translations[language]["Clue3"]

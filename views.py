@@ -228,6 +228,44 @@ def suspect_background_view(screen, language):
     running = True
     clock = pygame.time.Clock()
 
+    # Questions for each suspect
+    questions = {
+        0: [
+            translations[language]["Question1_Suspect1"],
+            translations[language]["Question2_Suspect1"],
+            translations[language]["Question3_Suspect1"]
+        ],
+        1: [
+            translations[language]["Question1_Suspect2"],
+            translations[language]["Question2_Suspect2"],
+            translations[language]["Question3_Suspect2"]
+        ],
+        2: [
+            translations[language]["Question1_Suspect3"],
+            translations[language]["Question2_Suspect3"],
+            translations[language]["Question3_Suspect3"]
+        ]
+    }
+    
+    # Answers for each suspect
+    answers = {
+        0: [
+            translations[language]["Answer1_Suspect1"],
+            translations[language]["Answer2_Suspect1"],
+            translations[language]["Answer3_Suspect1"]
+        ],
+        1: [
+            translations[language]["Answer1_Suspect2"],
+            translations[language]["Answer2_Suspect2"],
+            translations[language]["Answer3_Suspect2"]
+        ],
+        2: [
+            translations[language]["Answer1_Suspect3"],
+            translations[language]["Answer2_Suspect3"],
+            translations[language]["Answer3_Suspect3"]
+        ]
+    }
+
     while running:
         speech_engine.iterate()
         screen.blit(pygame.transform.scale(intro_background, (WIDTH, HEIGHT)), (0, 0))
@@ -325,11 +363,9 @@ def suspect_background_view(screen, language):
                 if interrogate_button.collidepoint(event.pos) and selected_suspect is not None:
                     suspect_name = ["Leila", "Sami", "Karim"][selected_suspect]
                     gender = "female" if suspect_name == "Leila" else "male"
-                    questions = translations[language][f"Suspect{selected_suspect+1}_Questions"]
-                    responses = translations[language][f"Suspect{selected_suspect+1}_Responses"]
-                    question_text = questions[question_index]
-                    response_text = responses[question_index]
-                    question_index = (question_index + 1) % len(questions)
+                    question_text = questions[selected_suspect][question_index]
+                    response_text = answers[selected_suspect][question_index]
+                    question_index = (question_index + 1) % len(questions[selected_suspect])
                     interrogation_alpha = 0
                     text_to_speech(f"Question: {question_text}", language, "male")
                     text_to_speech(response_text, language, gender)
