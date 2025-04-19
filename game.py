@@ -269,12 +269,12 @@ def evidence_board_view(screen, language, found_clues):
     board_rect = board_bg.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     
     # Evidence card properties
-    card_width = 350  # Increased width for better text spacing
-    card_height = 250  # Increased height for better text spacing
-    card_spacing = 50  # Increased spacing between cards
+    card_width = 400  # Increased width for better text spacing
+    card_height = 300  # Increased height for better text spacing
+    card_spacing = 60  # Increased spacing between cards
     cards_per_row = 2
     start_x = board_rect.x + (board_rect.width - (cards_per_row * card_width + (cards_per_row - 1) * card_spacing)) // 2
-    start_y = board_rect.y + 100
+    start_y = board_rect.y + 120  # Increased top margin
     
     # Create evidence cards
     evidence_cards = []
@@ -295,13 +295,19 @@ def evidence_board_view(screen, language, found_clues):
         title = font.render(translations[language][f"Clue{i+1}_Title"], True, (255, 255, 255))
         content = content_font.render(translations[language][f"Clue{i+1}"], True, (200, 200, 200))
         
-        # Center text on card with proper spacing
-        title_rect = title.get_rect(center=(card_width // 2, 50))
-        content_rect = content.get_rect(center=(card_width // 2, card_height // 2))
+        # Center text on card with increased vertical spacing
+        title_rect = title.get_rect(center=(card_width // 2, 50))  # Moved title up
+        content_rect = content.get_rect(center=(card_width // 2, card_height // 2 + 50))  # Moved content down
         
         # Add text with padding
         card.blit(title, title_rect)
         card.blit(content, content_rect)
+        
+        # Add a subtle separator line between title and content
+        separator_y = title_rect.bottom + 30  # Increased spacing
+        pygame.draw.line(card, (100, 100, 100, 100), 
+                        (card_width // 4, separator_y),
+                        (3 * card_width // 4, separator_y), 1)
         
         evidence_cards.append({
             'surface': card,
@@ -309,7 +315,7 @@ def evidence_board_view(screen, language, found_clues):
         })
     
     back_button = pygame.Rect(0, 0, 200, 60)
-    back_button.center = (WIDTH // 2, HEIGHT - 100)
+    back_button.center = (WIDTH // 2, HEIGHT - 120)  # Moved button down
     
     running = True
     clock = pygame.time.Clock()
@@ -320,9 +326,9 @@ def evidence_board_view(screen, language, found_clues):
         screen.blit(overlay, (0, 0))
         screen.blit(board_bg, board_rect)
         
-        # Draw title
+        # Draw title with increased spacing
         title_text = title_font.render(translations[language]["Evidence Board"], True, WHITE)
-        screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, board_rect.y + 50)))
+        screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, board_rect.y + 70)))  # Moved title down
         
         # Draw evidence cards
         for card in evidence_cards:
