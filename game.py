@@ -964,10 +964,10 @@ def pin_view_1(screen, points, found_clues, language):
     pygame.draw.line(logbook, WHITE, (10, 20), (50, 20), 2)
     pygame.draw.line(logbook, WHITE, (10, 40), (50, 40), 2)
     
-    # Logbook properties - random position in top right quadrant
+    # Logbook properties - random position in right side
     logbook_rect = logbook.get_rect(center=(
         random.randint(WIDTH // 2 + 100, WIDTH - 100),
-        random.randint(100, HEIGHT // 2 - 100)
+        random.randint(100, HEIGHT - 100)
     ))
     pulse_speed = 0.05
     pulse_phase = 0
@@ -1075,10 +1075,10 @@ def pin_view_2(screen, points, found_clues, language):
     glass = pygame.Surface((50, 70), pygame.SRCALPHA)
     pygame.draw.polygon(glass, (173, 216, 230), [(25, 0), (50, 20), (40, 70), (10, 70), (0, 20)])
     
-    # Glass properties - random position in left side
+    # Glass properties - random position in right side
     glass_rect = glass.get_rect(center=(
-        random.randint(100, WIDTH // 2 - 100),
-        random.randint(HEIGHT // 4, 3 * HEIGHT // 4)
+        random.randint(WIDTH // 2 + 100, WIDTH - 100),
+        random.randint(100, HEIGHT - 100)
     ))
     pulse_speed = 0.05
     pulse_phase = 0
@@ -1194,10 +1194,10 @@ def pin_view_3(screen, points, found_clues, language):
     pygame.draw.rect(note, BLACK, (0, 0, 70, 50), 2)
     pygame.draw.line(note, BLACK, (10, 25), (60, 25), 1)
     
-    # Note properties - random position in bottom area
+    # Note properties - random position in right side
     note_rect = note.get_rect(center=(
-        random.randint(WIDTH // 4, 3 * WIDTH // 4),
-        random.randint(HEIGHT // 2 + 100, HEIGHT - 100)
+        random.randint(WIDTH // 2 + 100, WIDTH - 100),
+        random.randint(100, HEIGHT - 100)
     ))
     pulse_speed = 0.05
     pulse_phase = 0
