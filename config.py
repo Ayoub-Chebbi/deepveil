@@ -21,16 +21,50 @@ translations = {
         "Clue1": "A torn page with cryptic symbols",
         "Clue2": "A glass shard with a strange mark",
         "Clue3": "A note hinting at a secret meeting",
-        "Case Text": "Late last night, the Golden Carthage Medallion, a relic from the ancient Punic era, vanished from the Tunis Museum. Security footage is grainy, and the guards reported nothing unusual. Three individuals had access to the exhibit hall: an archaeologist, a guard, and a collector. Your job is to find the clues and identify the thief.",
+        "Case Text": "The Alabaster Crown, a priceless artifact from the ancient city of Zafara, vanished from the Grand Museum under mysterious circumstances. Discovered by archaeologist Leila Mansour, it was said to hold secrets of a lost civilization. Security was tight, yet the crown disappeared without a trace during a private exhibit. Rumors swirl of insider involvement, a hidden agenda, or even a collector’s greed. As lead detective, your task is to navigate the web of clues, interrogate suspects, and uncover the truth before the trail goes cold.",
         "Suspect1": "Leila",
         "Suspect2": "Sami",
         "Suspect3": "Karim",
-        "Suspect1_Background": "Leila is a renowned archaeologist who unearthed the Golden Carthage Medallion during a dig in Utica two years ago. She’s fiercely protective of her discovery, often working late in the museum to catalog her findings. Colleagues say she’s been stressed lately, possibly due to funding cuts threatening her research. She claims she was in her office writing a paper the night of the theft.",
-        "Suspect2_Background": "Sami is a security guard at the Tunis Museum with five years of service. Known for his quiet demeanor, he’s been struggling with a gambling debt that’s grown out of control. He was on duty the night the medallion disappeared, stationed near the exhibit hall, but insists he saw nothing suspicious—though his shift logs show a 20-minute gap.",
-        "Suspect3_Background": "Karim is a wealthy antiquities collector with a private gallery in Sousse. He’s been after the Golden Carthage Medallion for years, once offering the museum a hefty sum to ‘borrow’ it for display. He was seen at a gala in the museum two days before the theft, chatting with staff about security protocols, but says he was home in bed when it happened.",
-        "Suspect1_Hint": "Leila was spotted near the exhibit hall at 1 a.m., hours after she said she left for home.",
-        "Suspect2_Hint": "Sami’s fingerprints were found on the display case, though he claims he checked it earlier in his shift.",
-        "Suspect3_Hint": "Karim inquired about the medallion’s exact location in the museum just days before it vanished."
+        "Suspect1_Intro": "Leila seems nervous, avoiding eye contact.",
+        "Suspect2_Intro": "Sami shifts uncomfortably, glancing at the door.",
+        "Suspect3_Intro": "Karim maintains a calm smile, but his hands are tense.",
+        "Suspect1_Background": "Leila Mansour, 38, is a renowned archaeologist who unearthed the Alabaster Crown in Zafara. Her career thrives on high-profile discoveries, but colleagues whisper of her obsession with the crown’s supposed mystical properties. She was overseeing its transfer to the museum and had unrestricted access to the exhibit. Recently, she’s been distant, spending late nights in her office studying ancient texts. Her expertise makes her invaluable, but does it also make her a suspect?",
+        "Suspect2_Background": "Sami Al-Rashid, 45, is a museum security guard with 15 years of service. Known for his quiet demeanor, he’s been struggling with a gambling debt that’s spiraled out of control. On the night of the theft, he was stationed near the exhibit but claims he saw nothing unusual. His financial troubles have raised eyebrows, and coworkers note he’s been unusually nervous, often checking his phone during shifts.",
+        "Suspect3_Background": "Karim Haddad, 52, is a wealthy art collector with a penchant for rare antiquities. He attended the private exhibit and openly admired the Alabaster Crown, even inquiring about its market value weeks prior. His collection includes items of questionable origin, and he’s rumored to have connections in the black market. Charismatic but evasive, Karim insists he was merely a guest that night, but his interest in the crown was unmistakable.",
+        "Move to the yellow light": "Move to the yellow light",
+        "Clue1": "A torn page with cryptic symbols",
+        "Clue2": "A glass shard with a strange mark",
+        "Clue3": "A note hinting at a secret meeting",
+        "Suspect1_Questions": [
+            "Where were you when the crown was stolen?",
+            "Why were you at the museum so late?",
+            "What do you know about the crown’s symbols?"
+        ],
+        "Suspect1_Responses": [
+            "I was in my office, cataloging artifacts.",
+            "I had to finish some paperwork; it was routine.",
+            "They’re ancient, but I haven’t decoded them yet."
+        ],
+        "Suspect2_Questions": [
+            "What were you doing during the theft?",
+            "Why were your fingerprints on the case?",
+            "Have you been approached by anyone suspicious?"
+        ],
+        "Suspect2_Responses": [
+            "I was on my rounds, nowhere near the exhibit.",
+            "I checked the case earlier, part of my job.",
+            "No, just the usual museum staff."
+        ],
+        "Suspect3_Questions": [
+            "Why were you so interested in the crown?",
+            "Who did you meet before the theft?",
+            "Where were you when the alarms went off?"
+        ],
+        "Suspect3_Responses": [
+            "It’s a beautiful piece, nothing more.",
+            "Just some business contacts, unrelated.",
+            "I was already leaving, didn’t hear them."
+        ]
     },
     "Arabic": {
         "Start": "ابدأ",
@@ -51,16 +85,51 @@ translations = {
         "Clue1": "صفحة ممزقة تحمل رموزًا غامضة",
         "Clue2": "شظية زجاج تحمل علامة غريبة",
         "Clue3": "ملاحظة تشير إلى اجتماع سري",
-        "Case Text": "في وقت متأخر من الليلة الماضية، اختفت ميدالية قرطاج الذهبية، وهي قطعة أثرية من العصر البوني القديم، من متحف تونس. لقطات الأمان غير واضحة، ولم يبلغ الحراس عن شيء غير عادي. ثلاثة أشخاص كان لهم وصول إلى قاعة المعرض: عالمة آثار، حارس، وجامع. مهمتك هي العثور على الأدلة وتحديد السارق.",
+        "Case Text": "اختفى تاج الألباستر، قطعة أثرية لا تقدر بثمن من مدينة زفارة القديمة، من المتحف الكبير في ظروف غامضة. اكتشفتها عالمة الآثار ليلى منصور، ويقال إنها تحمل أسرار حضارة مفقودة. كانت الأمن مشددًا، لكن التاج اختفى دون أثر خلال معرض خاص. تتردد شائعات عن تورط داخلي، أجندة خفية، أو حتى جشع جامع. بصفتك المحقق الرئيسي، مهمتك هي التنقل عبر شبكة الأدلة، استجواب المشتبه بهم، وكشف الحقيقة قبل أن يبرد الأثر.",
         "Suspect1": "ليلى",
         "Suspect2": "سامي",
         "Suspect3": "كريم",
-        "Suspect1_Background": "ليلى عالمة آثار مشهورة اكتشفت ميدالية قرطاج الذهبية خلال حفريات في أوتيكا قبل عامين. إنها شديدة الحرص على اكتشافها، وغالبًا ما تعمل لوقت متأخر في المتحف لتوثيق نتائجها. يقول زملاؤها إنها كانت متوترة مؤخرًا، ربما بسبب تخفيضات في التمويل تهدد أبحاثها. تدعي أنها كانت في مكتبها تكتب ورقة بحثية ليلة السرقة.",
-        "Suspect2_Background": "سامي حارس أمن في متحف تونس منذ خمس سنوات. معروف بهدوئه، لكنه يعاني من ديون قمار خارجة عن السيطرة. كان في الخدمة ليلة اختفاء الميدالية، متمركزًا بالقرب من قاعة المعرض، لكنه يصر على أنه لم ير شيئًا مشبوهًا—على الرغم من أن سجلات نوبته تظهر فجوة لمدة 20 دقيقة.",
-        "Suspect3_Background": "كريم جامع تحف ثري يمتلك معرضًا خاصًا في سوسة. كان يطارد ميدالية قرطاج الذهبية منذ سنوات، وقد عرض على المتحف مبلغًا كبيرًا لـ‘استعارتها’ للعرض. شوهد في حفل بالمتحف قبل يومين من السرقة، يتحدث مع الموظفين عن بروتوكولات الأمان، لكنه يقول إنه كان نائمًا في منزله وقت الحادث.",
-        "Suspect1_Hint": "شوهدت ليلى بالقرب من قاعة المعرض في الساعة الواحدة صباحًا، بعد ساعات من قولها إنها غادرت إلى المنزل.",
-        "Suspect2_Hint": "عثر على بصمات سامي على علبة العرض، رغم أنه يدعي أنه فحصها في وقت سابق من نوبته.",
-        "Suspect3_Hint": "استفسر كريم عن الموقع الدقيق للميدالية في المتحف قبل أيام من اختفائها."
+        "Suspect1_Intro": "ليلى تبدو متوترة، تتجنب التواصل البصري.",
+        "Suspect2_Intro": "سامي يتحرك بعدم ارتياح، ينظر إلى الباب.",
+        "Suspect3_Intro": "كريم يحافظ على ابتسامة هادئة، لكن يديه مشدودتان.",
+        "Suspect1_Background": "ليلى منصور، 38 عامًا، عالمة آثار مشهورة اكتشفت تاج الألباستر في زفارة. تزدهر مسيرتها المهنية بفضل اكتشافات بارزة، لكن زملاءها يهمسون بشأن هوسها بالخصائص الغامضة المزعومة للتاج. كانت تشرف على نقله إلى المتحف وكان لديها وصول غير محدود إلى المعرض. مؤخرًا، بدت منعزلة، تقضي ليالٍ متأخرة في مكتبها تدرس نصوصًا قديمة. خبرتها تجعلها لا غنى عنها، لكن هل تجعلها مشتبهًا بها؟",
+        "Suspect2_Background": "سامي الرشيد، 45 عامًا، حارس أمن في المتحف بخدمة 15 عامًا. يُعرف بهدوئه، لكنه يعاني من ديون قمار خارجة عن السيطرة. في ليلة السرقة، كان متمركزًا بالقرب من المعرض لكنه يدعي أنه لم يرَ شيئًا غير عادي. أثارت مشاكله المالية الشكوك، ويلاحظ زملاؤه أنه كان متوترًا بشكل غير معتاد، غالبًا ما يتحقق من هاتفه أثناء نوباته.",
+        "Suspect3_Background": "كريم حداد، 52 عامًا، جامع أعمال فنية ثري يميل إلى الأثار النادرة. حضر المعرض الخاص وأعجب علنًا بتاج الألباستر، حتى استفسر عن قيمته السوقية قبل أسابيع. تشمل مجموعته أغراضًا ذات أصول مشكوك فيها، وترددت شائعات عن علاقاته في السوق السوداء. ساحر لكنه مراوغ، يصر كريم على أنه كان مجرد ضيف تلك الليلة، لكن اهتمامه بالتاج كان لافتًا.",
+        "Move to the yellow light": "تحرك نحو الضوء الأصفر",
+        "Clue1": "صفحة ممزقة برموز غامضة",
+        "Clue2": "شظية زجاجية بعلامة غريبة",
+        "Clue3": "ملاحظة تشير إلى اجتماع سري",
+        "Suspect1_Questions": [
+            "أين كنتِ عندما سُرق التاج؟",
+            "لماذا كنتِ في المتحف متأخرًا؟",
+            "ماذا تعرفين عن رموز التاج؟"
+        ],
+        "Suspect1_Responses": [
+            "كنتُ في مكتبي، أسجل القطع الأثرية.",
+            "كان عليّ إنهاء بعض الأوراق، أمر روتيني.",
+            "إنها رموز قديمة، لكنني لم أفككها بعد."
+        ],
+        "Suspect2_Questions": [
+            "ماذا كنت تفعل أثناء السرقة؟",
+            "لماذا وُجدت بصماتك على العلبة؟",
+            "هل اقترب منك أحد مشبوه؟"
+        ],
+        "Suspect2_Responses": [
+            "كنت في جولاتي، بعيدًا عن المعرض.",
+            "فحصت العلبة في وقت سابق، جزء من عملي.",
+            "لا، فقط موظفو المتحف المعتادون."
+        ],
+        "Suspect3_Questions": [
+            "لماذا كنت مهتمًا جدًا بالتاج؟",
+            "من التقيت قبل السرقة؟",
+            "أين كنت عندما انطلقت الأجهزة الإنذارية؟"
+        ],
+        "Suspect3_Responses": [
+            "إنه قطعة رائعة، لا أكثر.",
+            "فقط بعض جهات الاتصال التجارية، لا علاقة لها.",
+            "كنت أغادر بالفعل، لم أسمعها."
+        ]
+        
     }
 }
 

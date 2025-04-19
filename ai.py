@@ -1,15 +1,15 @@
 import random
 import threading
-from openai import AsyncOpenAI
+from openai import OpenAI  # Synchronous client
 
-client = AsyncOpenAI(api_key="sk-cb791902d7b04a28bd708ff5b2cc3805", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="sk-cb791902d7b04a28bd708ff5b2cc3805", base_url="https://api.deepseek.com")
 response_queue = []
 response_lock = threading.Lock()
 
 def get_deepseek_response_async(prompt):
-    async def fetch_response():
+    def fetch_response():
         try:
-            response = await client.chat.completions.create(
+            response = client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=100
@@ -20,7 +20,7 @@ def get_deepseek_response_async(prompt):
             with response_lock:
                 response_queue.append(f"Error: {e}")
     
-    threading.Thread(target=lambda: client.loop.run_until_complete(fetch_response()), daemon=True).start()
+    threading.Thread(target=fetch_response, daemon=True).start()
     return "Processing..."
 
 def suspect_ai(found_clues, suspect_visibility, language, points):
