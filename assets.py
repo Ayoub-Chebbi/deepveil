@@ -14,6 +14,7 @@ def load_image_with_opacity(path, size=None, alpha=180):
 background_image = load_image_with_opacity("assets/backview3.png")
 new_background_image = load_image_with_opacity("assets/backview2.jpg")
 pin_image = pygame.image.load("assets/pin.png")
+hero_image = pygame.image.load("assets/dethero.png")
 suspect_image = pygame.image.load("assets/suspect.jpg")
 suspect_large_image = pygame.image.load("assets/suspect.jpg")
 level_image = pygame.image.load("assets/inspectorStart.png")

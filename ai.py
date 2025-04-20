@@ -28,7 +28,7 @@ def suspect_ai(found_clues, suspect_visibility, language, points):
         return suspect_visibility
     
     clue_count = len(found_clues)
-    prompt = f"Generate a short alibi for a suspect in a theft case based on {clue_count} clues found. Language: {language}."
+    prompt = f"Generate a short alibi for a suspect in a theft case based on {clue_count} clues found. Language: {language}. and make it only 8 words"
     if points > 20 and random.random() < 0.3:
         prompt += " Include a subtle red herring."
     
@@ -50,7 +50,7 @@ def suspect_ai(found_clues, suspect_visibility, language, points):
 def get_smart_hint(found_clues, points, language):
     clue_count = len(found_clues)
     difficulty = "easy" if points < 15 else "hard"
-    prompt = f"Generate a short hint for a detective game with {clue_count} clues found so far. Difficulty: {difficulty}. Language: {language}."
+    prompt = f"Generate a short hint for a detective game with {clue_count} clues found so far. Difficulty: {difficulty}. Language: {language}. and make it only 8 words"
     
     response = get_deepseek_response_async(prompt)
     if response == "Processing...":
