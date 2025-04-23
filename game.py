@@ -3,7 +3,7 @@ import sys
 import math
 import random
 from config import WIDTH, HEIGHT, translations, GREEN, WHITE, DARK_GRAY, LIGHT_GRAY, BLUE, BLUE_HOVER, RED, YELLOW, BLACK
-from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1,detective_bg2,detective_bg3, hero_image
+from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1, detective_bg2, detective_bg3, hero_image
 from ai import suspect_ai, get_smart_hint
 from speech import text_to_speech
 from utils import draw_button
@@ -91,114 +91,114 @@ def new_view(screen, points, found_clues, language):
 
     while running:
         try:
-        screen.blit(pygame.transform.scale(new_background_image, (WIDTH, HEIGHT)), (0, 0))
-        mission_text = mission_font.render(translations[language]["Mission"], True, (0, 255, 255))
-        screen.blit(mission_text, mission_text.get_rect(center=(WIDTH // 2, 50)))
+            screen.blit(pygame.transform.scale(new_background_image, (WIDTH, HEIGHT)), (0, 0))
+            mission_text = mission_font.render(translations[language]["Mission"], True, (0, 255, 255))
+            screen.blit(mission_text, mission_text.get_rect(center=(WIDTH // 2, 50)))
 
-        for i, pos in enumerate(pin_positions):
-            pin_color = (255, 215, 0) if i == current_pin_index else (150, 150, 150)
-            scaled_pin = pygame.transform.scale(pin_image, (40, 40))
-            scaled_pin.fill(pin_color, special_flags=pygame.BLEND_MULT)
-            if i == current_pin_index:
-                glow_alpha = 128 + int(127 * math.sin(pygame.time.get_ticks() / 500))
-                glow = pygame.Surface((60, 60), pygame.SRCALPHA)
-                pygame.draw.circle(glow, (255, 215, 0, glow_alpha), (30, 30), 30)
-                screen.blit(glow, (pos[0] - 10, pos[1] - 10))
-            screen.blit(scaled_pin, pos)
-            if i == current_pin_index and i < len(pin_positions) - 1:
-                pygame.draw.line(screen, RED, (pos[0] + 20, pos[1] + 20), (pin_positions[i + 1][0] + 20, pin_positions[i + 1][1] + 20), 3)
-
-        points_box = pygame.Rect(0, 0, 150, 40)
-        points_box.center = (WIDTH - 100, 100)
-        pygame.draw.rect(screen, LIGHT_GRAY, points_box, border_radius=5)
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
-        screen.blit(points_text, points_text.get_rect(center=points_box.center))
-
-        obj_x, obj_y = WIDTH - WIDTH // 4, 150
-        for i, obj in enumerate(objectives):
-            icon_rect = pygame.Rect(obj_x - 30, obj_y + i * 40, 20, 20)
-            icon_color = GREEN if completed_objectives[i] else WHITE
-            pygame.draw.rect(screen, icon_color, icon_rect, border_radius=5)
-            obj_text = font.render(obj, True, WHITE)
-            screen.blit(obj_text, (obj_x, obj_y + i * 40))
-
-        for i, (pos, visible) in enumerate(zip(suspect_positions, suspect_visibility)):
-            if visible:
-                suspect_rect = suspect_rects[i]
-                hover = suspect_rect.collidepoint(pygame.mouse.get_pos()) and len(found_clues) == 3 and select_mode
-                if hover or (select_mode and visible):
+            for i, pos in enumerate(pin_positions):
+                pin_color = (255, 215, 0) if i == current_pin_index else (150, 150, 150)
+                scaled_pin = pygame.transform.scale(pin_image, (40, 40))
+                scaled_pin.fill(pin_color, special_flags=pygame.BLEND_MULT)
+                if i == current_pin_index:
                     glow_alpha = 128 + int(127 * math.sin(pygame.time.get_ticks() / 500))
-                    glow = pygame.Surface((80, 110), pygame.SRCALPHA)
-                    pygame.draw.rect(glow, (0, 255, 255, glow_alpha), (0, 0, 80, 110), border_radius=5)
-                    screen.blit(glow, (pos[0] - 5, pos[1] - 5))
-                screen.blit(pygame.transform.scale(suspect_image, (70, 100)), pos)
-                suspect_text = font.render(translations[language][f"Suspect{i+1}"], True, WHITE)
-                screen.blit(suspect_text, suspect_text.get_rect(center=(pos[0] + 35, pos[1] + 115)))
+                    glow = pygame.Surface((60, 60), pygame.SRCALPHA)
+                    pygame.draw.circle(glow, (255, 215, 0, glow_alpha), (30, 30), 30)
+                    screen.blit(glow, (pos[0] - 10, pos[1] - 10))
+                screen.blit(scaled_pin, pos)
+                if i == current_pin_index and i < len(pin_positions) - 1:
+                    pygame.draw.line(screen, RED, (pos[0] + 20, pos[1] + 20), (pin_positions[i + 1][0] + 20, pin_positions[i + 1][1] + 20), 3)
 
-        if len(found_clues) > 0:
-            draw_button(screen, evidence_button, BLUE, BLUE_HOVER, "Evidence Board", font, pygame.mouse.get_pos())
-        if len(found_clues) == 3:
-            draw_button(screen, explore_button, BLUE, BLUE_HOVER, translations[language]["Explore Suspect Background"], font, pygame.mouse.get_pos())
-            draw_button(screen, select_box, BLUE, BLUE_HOVER, translations[language]["Select a suspect!"], font, pygame.mouse.get_pos())
+            points_box = pygame.Rect(0, 0, 150, 40)
+            points_box.center = (WIDTH - 100, 100)
+            pygame.draw.rect(screen, LIGHT_GRAY, points_box, border_radius=5)
+            points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
+            screen.blit(points_text, points_text.get_rect(center=points_box.center))
 
-        pygame.display.flip()
-        clock.tick(60)
+            obj_x, obj_y = WIDTH - WIDTH // 4, 150
+            for i, obj in enumerate(objectives):
+                icon_rect = pygame.Rect(obj_x - 30, obj_y + i * 40, 20, 20)
+                icon_color = GREEN if completed_objectives[i] else WHITE
+                pygame.draw.rect(screen, icon_color, icon_rect, border_radius=5)
+                obj_text = font.render(obj, True, WHITE)
+                screen.blit(obj_text, (obj_x, obj_y + i * 40))
+
+            for i, (pos, visible) in enumerate(zip(suspect_positions, suspect_visibility)):
+                if visible:
+                    suspect_rect = suspect_rects[i]
+                    hover = suspect_rect.collidepoint(pygame.mouse.get_pos()) and len(found_clues) == 3 and select_mode
+                    if hover or (select_mode and visible):
+                        glow_alpha = 128 + int(127 * math.sin(pygame.time.get_ticks() / 500))
+                        glow = pygame.Surface((80, 110), pygame.SRCALPHA)
+                        pygame.draw.rect(glow, (0, 255, 255, glow_alpha), (0, 0, 80, 110), border_radius=5)
+                        screen.blit(glow, (pos[0] - 5, pos[1] - 5))
+                    screen.blit(pygame.transform.scale(suspect_image, (70, 100)), pos)
+                    suspect_text = font.render(translations[language][f"Suspect{i+1}"], True, WHITE)
+                    screen.blit(suspect_text, suspect_text.get_rect(center=(pos[0] + 35, pos[1] + 115)))
+
+            if len(found_clues) > 0:
+                draw_button(screen, evidence_button, BLUE, BLUE_HOVER, "Evidence Board", font, pygame.mouse.get_pos())
+            if len(found_clues) == 3:
+                draw_button(screen, explore_button, BLUE, BLUE_HOVER, translations[language]["Explore Suspect Background"], font, pygame.mouse.get_pos())
+                draw_button(screen, select_box, BLUE, BLUE_HOVER, translations[language]["Select a suspect!"], font, pygame.mouse.get_pos())
+
+            pygame.display.flip()
+            clock.tick(60)
             
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                print(f"Mouse click at {event.pos}")
-                if len(found_clues) == 3 and explore_button.collidepoint(event.pos):
-                    print("Calling suspect_background_view")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    print(f"Mouse click at {event.pos}")
+                    if len(found_clues) == 3 and explore_button.collidepoint(event.pos):
+                        print("Calling suspect_background_view")
                         try:
-                    suspect_background_view(screen, language)
+                            suspect_background_view(screen, language)
                             print("Returned from suspect_background_view")
                         except Exception as e:
                             print(f"Error in suspect_background_view: {e}")
                             import traceback
                             traceback.print_exc()
-                if len(found_clues) == 3 and select_box.collidepoint(event.pos):
-                    print("Toggled select_mode")
-                    select_mode = not select_mode
-                    text_to_speech("Select a suspect now.", language)
-                if evidence_button.collidepoint(event.pos):
-                    print("Clicked evidence_button")
-                    evidence_board_view(screen, language, found_clues)
-                for i, rect in enumerate(suspect_rects):
-                    if rect.collidepoint(event.pos) and suspect_visibility[i] and len(found_clues) == 3 and select_mode:
-                        print(f"Selected suspect {i}")
-                        select_mode = False
-                        if i == correct_suspect:
-                            win_view(screen, language)
-                            return points, found_clues, True
-                        else:
-                            lose_view(screen, language)
-                            return points, found_clues, False
-                for i, pin_rect in enumerate(pin_rects):
-                    if pin_rect.collidepoint(event.pos) and i == current_pin_index:
-                        print(f"Pin {i} clicked, current_pin_index = {current_pin_index}")
-                        if i == 0:
-                            if unlocked_pin1:
-                                pin_view_index = hall_view(screen, points, language, 0)
-                                print(f"hall_view returned pin_view_index: {pin_view_index}")
-                                if pin_view_index == 0:
-                                    points, found_clues = pin_view_1(screen, points, found_clues, language)
-                                    print(f"pin_view_1: found_clues = {found_clues}")
+                    if len(found_clues) == 3 and select_box.collidepoint(event.pos):
+                        print("Toggled select_mode")
+                        select_mode = not select_mode
+                        text_to_speech("Select a suspect now.", language)
+                    if evidence_button.collidepoint(event.pos):
+                        print("Clicked evidence_button")
+                        evidence_board_view(screen, language, found_clues)
+                    for i, rect in enumerate(suspect_rects):
+                        if rect.collidepoint(event.pos) and suspect_visibility[i] and len(found_clues) == 3 and select_mode:
+                            print(f"Selected suspect {i}")
+                            select_mode = False
+                            if i == correct_suspect:
+                                win_view(screen, language)
+                                return points, found_clues, True
                             else:
-                                points, unlocked_pin1 = puzzle_view_1(screen, points, language)
-                                print(f"puzzle_view_1: unlocked_pin1 = {unlocked_pin1}")
-                        elif i == 1:
-                            if unlocked_pin2:
-                                pin_view_index = hall_view(screen, points, language, 1)
-                                print(f"hall_view returned pin_view_index: {pin_view_index}")
-                                if pin_view_index == 1:
-                                    points, found_clues = pin_view_2(screen, points, found_clues, language)
-                                    print(f"pin_view_2: found_clues = {found_clues}")
-                            else:
+                                lose_view(screen, language)
+                                return points, found_clues, False
+                    for i, pin_rect in enumerate(pin_rects):
+                        if pin_rect.collidepoint(event.pos) and i == current_pin_index:
+                            print(f"Pin {i} clicked, current_pin_index = {current_pin_index}")
+                            if i == 0:
+                                if unlocked_pin1:
+                                    pin_view_index = hall_view(screen, points, language, 0)
+                                    print(f"hall_view returned pin_view_index: {pin_view_index}")
+                                    if pin_view_index == 0:
+                                        points, found_clues = pin_view_1(screen, points, found_clues, language)
+                                        print(f"pin_view_1: found_clues = {found_clues}")
+                                else:
+                                    points, unlocked_pin1 = puzzle_view_1(screen, points, language)
+                                    print(f"puzzle_view_1: unlocked_pin1 = {unlocked_pin1}")
+                            elif i == 1:
+                                if unlocked_pin2:
+                                    pin_view_index = hall_view(screen, points, language, 1)
+                                    print(f"hall_view returned pin_view_index: {pin_view_index}")
+                                    if pin_view_index == 1:
+                                        points, found_clues = pin_view_2(screen, points, found_clues, language)
+                                        print(f"pin_view_2: found_clues = {found_clues}")
+                                else:
                                     try:
-                                points, unlocked_pin2 = puzzle_view_2(screen, points, language)
-                                print(f"puzzle_view_2: unlocked_pin2 = {unlocked_pin2}")
+                                        points, unlocked_pin2 = puzzle_view_2(screen, points, language)
+                                        print(f"puzzle_view_2: unlocked_pin2 = {unlocked_pin2}")
                                         if unlocked_pin2:
                                             pin_view_index = hall_view(screen, points, language, 1)
                                             print(f"hall_view returned pin_view_index: {pin_view_index}")
@@ -215,42 +215,40 @@ def new_view(screen, points, found_clues, language):
                                         import traceback
                                         traceback.print_exc()
                                         unlocked_pin2 = False
-                        elif i == 2:
-                            if unlocked_pin3:
-                                pin_view_index = hall_view(screen, points, language, 2)
-                                print(f"hall_view returned pin_view_index: {pin_view_index}")
-                                if pin_view_index == 2:
-                                    points, found_clues = pin_view_3(screen, points, found_clues, language)
-                                    print(f"pin_view_3: found_clues = {found_clues}")
-                            else:
-                                points, unlocked_pin3 = puzzle_view_3(screen, points, language)
-                                print(f"puzzle_view_3: unlocked_pin3 = {unlocked_pin3}")
-                        if "clue1" in found_clues and not suspect_visibility[0]:
-                            suspect_visibility[0] = True
-                            completed_objectives[0] = True
-                            current_pin_index = 1
-                            print(f"Clue1 found, current_pin_index = 1")
-                        elif "clue2" in found_clues and not suspect_visibility[1]:
-                            suspect_visibility[1] = True
-                            completed_objectives[1] = True
-                            current_pin_index = 2
-                            print(f"Clue2 found, current_pin_index = 2")
-                        elif "clue3" in found_clues and not suspect_visibility[2]:
-                            suspect_visibility[2] = True
-                            completed_objectives[2] = True
-                            print(f"Clue3 found, suspect_visibility = {suspect_visibility}")
-                            try:
-                        suspect_visibility = suspect_ai(found_clues, suspect_visibility, language, points)
-                            except Exception as e:
-                                print(f"Error in suspect_ai: {e}")
-                                import traceback
-                                traceback.print_exc()
+                            elif i == 2:
+                                if unlocked_pin3:
+                                    pin_view_index = hall_view(screen, points, language, 2)
+                                    print(f"hall_view returned pin_view_index: {pin_view_index}")
+                                    if pin_view_index == 2:
+                                        points, found_clues = pin_view_3(screen, points, found_clues, language)
+                                        print(f"pin_view_3: found_clues = {found_clues}")
+                                else:
+                                    points, unlocked_pin3 = puzzle_view_3(screen, points, language)
+                                    print(f"puzzle_view_3: unlocked_pin3 = {unlocked_pin3}")
+                            if "clue1" in found_clues and not suspect_visibility[0]:
+                                suspect_visibility[0] = True
+                                completed_objectives[0] = True
+                                current_pin_index = 1
+                                print(f"Clue1 found, current_pin_index = 1")
+                            elif "clue2" in found_clues and not suspect_visibility[1]:
+                                suspect_visibility[1] = True
+                                completed_objectives[1] = True
+                                current_pin_index = 2
+                                print(f"Clue2 found, current_pin_index = 2")
+                            elif "clue3" in found_clues and not suspect_visibility[2]:
+                                suspect_visibility[2] = True
+                                completed_objectives[2] = True
+                                print(f"Clue3 found, suspect_visibility = {suspect_visibility}")
+                                try:
+                                    suspect_visibility = suspect_ai(found_clues, suspect_visibility, language, points)
+                                except Exception as e:
+                                    print(f"Error in suspect_ai: {e}")
+                                    import traceback
+                                    traceback.print_exc()
         except Exception as e:
             print(f"Error in new_view main loop: {e}")
             import traceback
             traceback.print_exc()
-    return points, found_clues, False
-
     return points, found_clues, False
 
 def evidence_board_view(screen, language, found_clues):
@@ -263,30 +261,31 @@ def evidence_board_view(screen, language, found_clues):
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
     
-    # Create evidence board background
-    board_bg = pygame.Surface((WIDTH - 200, HEIGHT - 200), pygame.SRCALPHA)
+    # Create evidence board background with increased size for better spacing
+    board_bg = pygame.Surface((WIDTH - 150, HEIGHT - 150), pygame.SRCALPHA)
     board_bg.fill((40, 40, 40, 220))
     board_rect = board_bg.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     
-    # Evidence card properties
+    # Evidence card properties with increased spacing
     card_width = 400
-    card_height = 300
-    card_spacing = 60
+    card_height = 350  # Increased height for better text spacing
+    card_spacing_x = 100  # Increased horizontal spacing
+    card_spacing_y = 100  # Increased vertical spacing
     cards_per_row = 2
-    start_x = board_rect.x + (board_rect.width - (cards_per_row * card_width + (cards_per_row - 1) * card_spacing)) // 2
-    start_y = board_rect.y + 120
+    start_x = board_rect.x + (board_rect.width - (cards_per_row * card_width + (cards_per_row - 1) * card_spacing_x)) // 2
+    start_y = board_rect.y + 150  # Increased offset for title spacing
     
-    # Create evidence cards with enhanced styling
+    # Create evidence cards with enhanced styling and spacing
     evidence_cards = []
     for i, clue in enumerate(found_clues):
         row = i // cards_per_row
         col = i % cards_per_row
-        x = start_x + col * (card_width + card_spacing)
-        y = start_y + row * (card_height + card_spacing)
+        x = start_x + col * (card_width + card_spacing_x)
+        y = start_y + row * (card_height + card_spacing_y)
         
         # Create card surface with black background
         card = pygame.Surface((card_width, card_height), pygame.SRCALPHA)
-        card.fill((0, 0, 0, 220))  # Black background
+        card.fill((0, 0, 0, 220))
         
         # Add card border with rounded corners
         pygame.draw.rect(card, (100, 100, 100, 180), (0, 0, card_width, card_height), 3, border_radius=15)
@@ -296,20 +295,20 @@ def evidence_board_view(screen, language, found_clues):
         shadow.fill((0, 0, 0, 100))
         pygame.draw.rect(shadow, (0, 0, 0, 100), (0, 0, card_width + 10, card_height + 10), border_radius=20)
         
-        # Add evidence text with better spacing
+        # Add evidence text with increased spacing
         title = title_font.render(translations[language][f"Clue{i+1}_Title"], True, (255, 255, 255))
         content = content_font.render(translations[language][f"Clue{i+1}"], True, (200, 200, 200))
         
-        # Add text with improved spacing
-        title_rect = title.get_rect(center=(card_width // 2, 80))  # Moved down for better spacing
-        content_rect = content.get_rect(center=(card_width // 2, card_height // 2 + 80))  # Moved down for better spacing
+        # Position text with more vertical separation
+        title_rect = title.get_rect(center=(card_width // 2, 80))
+        content_rect = content.get_rect(center=(card_width // 2, card_height // 2 + 100))  # Increased offset
         
         # Add text shadow
         title_shadow = title_font.render(translations[language][f"Clue{i+1}_Title"], True, (0, 0, 0, 100))
         content_shadow = content_font.render(translations[language][f"Clue{i+1}"], True, (0, 0, 0, 100))
         
         card.blit(title_shadow, (title_rect.x + 2, title_rect.y + 2))
-        card.blit(content_shadow, (content_rect.x + 2, content_rect.y + 2))
+        card.blit(content_shadow, (content_rect.x + 2, content_rect.y + 2))  # Fixed comma
         card.blit(title, title_rect)
         card.blit(content, content_rect)
         
@@ -320,7 +319,7 @@ def evidence_board_view(screen, language, found_clues):
         })
     
     back_button = pygame.Rect(0, 0, 200, 60)
-    back_button.center = (WIDTH // 2, HEIGHT - 120)
+    back_button.center = (WIDTH // 2, HEIGHT - 100)  # Adjusted for spacing
     
     running = True
     clock = pygame.time.Clock()
@@ -331,10 +330,10 @@ def evidence_board_view(screen, language, found_clues):
         screen.blit(overlay, (0, 0))
         screen.blit(board_bg, board_rect)
         
-        # Draw title with enhanced styling
+        # Draw title with increased spacing
         title_text = title_font.render(translations[language]["Evidence Board"], True, (255, 255, 255))
         title_shadow = title_font.render(translations[language]["Evidence Board"], True, (0, 0, 0, 100))
-        title_rect = title_text.get_rect(center=(WIDTH // 2, board_rect.y + 70))
+        title_rect = title_text.get_rect(center=(WIDTH // 2, board_rect.y + 80))  # Increased offset
         screen.blit(title_shadow, (title_rect.x + 2, title_rect.y + 2))
         screen.blit(title_text, title_rect)
         
@@ -750,7 +749,7 @@ def puzzle_view_2(screen, points, language):
         while running:
             try:
                 # Draw background and overlay
-            screen.blit(scaled_background, (0, 0))
+                screen.blit(scaled_background, (0, 0))
                 screen.blit(overlay, (0, 0))
                 screen.blit(puzzle_bg, puzzle_bg_rect)
                 
@@ -764,8 +763,8 @@ def puzzle_view_2(screen, points, language):
                     pygame.draw.line(screen, (100, 100, 100),
                                    (WIDTH//2 - 120, HEIGHT//2 - 120 + i*60),
                                    (WIDTH//2 + 120, HEIGHT//2 - 120 + i*60), 2)
-            
-            # Draw tiles
+                
+                # Draw tiles
                 for i, rect in enumerate(tile_rects):
                     x, y = i % 4, i // 4
                     if grid[y][x] is not None:
@@ -800,10 +799,10 @@ def puzzle_view_2(screen, points, language):
 
                 pygame.display.flip()
                 clock.tick(60)
-            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
+                
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
                     elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                         return points, False
                     elif event.type == pygame.MOUSEBUTTONDOWN and not puzzle_solved:
@@ -812,7 +811,7 @@ def puzzle_view_2(screen, points, language):
                             continue
                         empty_x, empty_y = empty_pos
                         for i, rect in enumerate(tile_rects):
-                        if rect.collidepoint(event.pos):
+                            if rect.collidepoint(event.pos):
                                 x, y = i % 4, i // 4
                                 if (abs(x - empty_x) == 1 and y == empty_y) or (abs(y - empty_y) == 1 and x == empty_x):
                                     grid[empty_y][empty_x], grid[y][x] = grid[y][x], grid[empty_y][empty_x]
@@ -821,18 +820,18 @@ def puzzle_view_2(screen, points, language):
                                         points += 10
                                         message_text = "Access Granted"
                                         message_timer = 120
-                                puzzle_solved = True
+                                        puzzle_solved = True
                                         try:
                                             text_to_speech("Access granted. Entering the room.", language)
-    except Exception as e:
+                                        except Exception as e:
                                             print(f"TTS error in puzzle_view_2: {e}")
+                                break
             except Exception as e:
                 print(f"Error in puzzle_view_2 main loop: {e}")
-        import traceback
-        traceback.print_exc()
+                import traceback
+                traceback.print_exc()
+                return points, False
         return points, False
-
-    return points, False
     except Exception as e:
         print(f"Crash in puzzle_view_2: {e}")
         import traceback
@@ -967,11 +966,11 @@ def puzzle_view_3(screen, points, language):
                                 matched_pairs += 1
                                 
                                 if matched_pairs == 8:  # All pairs matched
-                            points += 10
-                            message_text = "Access Granted"
-                            message_timer = 120
-                            puzzle_solved = True
-                            text_to_speech("Access granted. Entering the room.", language)
+                                    points += 10
+                                    message_text = "Access Granted"
+                                    message_timer = 120
+                                    puzzle_solved = True
+                                    text_to_speech("Access granted. Entering the room.", language)
                             else:
                                 # No match, flip cards back immediately
                                 first_card['flipped'] = False
