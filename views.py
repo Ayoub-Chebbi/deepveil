@@ -145,70 +145,80 @@ def main_menu(screen):
     stop_speech()
     speech_engine.endLoop()
 
-def intro_view(screen, language):
-    font = pygame.font.Font(None, 36)
-    case_text = translations[language]["Case Text"]
-    words = case_text.split()
-    lines = []
-    current_line = []
-    max_width = screen.get_width() - 100
-    for word in words:
-        test_line = ' '.join(current_line + [word])
-        if font.size(test_line)[0] <= max_width:
-            current_line.append(word)
-        else:
-            lines.append(current_line)
-            current_line = [word]
-    lines.append(current_line)
+def intro_view(screen, language, level=1):
+    try:
+        font = pygame.font.Font(None, 36)
+        case_text = translations[language][f"Case Text_Level{level}"]
+        words = case_text.split()
+        lines = []
+        current_line = []
+        max_width = screen.get_width() - 100
+        for word in words:
+            test_line = ' '.join(current_line + [word])
+            if font.size(test_line)[0] <= max_width:
+                current_line.append(word)
+            else:
+                lines.append(current_line)
+                current_line = [word]
+        lines.append(current_line)
 
-    text_to_speech(case_text, language)
-    running = True
-    current_word_index = 0
-    displayed_lines = []
-    start_time = time.time()
-    total_words = len(words)
-    audio_duration = len(case_text) / 10
-    word_interval = audio_duration / total_words if total_words > 0 else 0.1
-    next_button = pygame.Rect(0, 0, 200, 50)
-    next_button.center = (screen.get_width() // 2, screen.get_height() // 2 + 100)
-    clock = pygame.time.Clock()
+        text_to_speech(case_text, language)
+        running = True
+        current_word_index = 0
+        displayed_lines = []
+        start_time = time.time()
+        total_words = len(words)
+        audio_duration = len(case_text) / 10
+        word_interval = audio_duration / total_words if total_words > 0 else 0.1
+        next_button = pygame.Rect(0, 0, 200, 50)
+        next_button.center = (screen.get_width() // 2, screen.get_height() // 2 + 100)
+        clock = pygame.time.Clock()
 
-    while running:
-        speech_engine.iterate()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                stop_speech()
+        while running:
+            try:
+                speech_engine.iterate()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        stop_speech()
+                        running = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if next_button.collidepoint(event.pos):
+                            stop_speech()
+                            return
+
+                screen.fill((0, 0, 0))
+                screen.blit(pygame.transform.scale(intro_background, screen.get_size()), (0, 0))
+                elapsed_time = time.time() - start_time
+                target_word_count = int(elapsed_time / word_interval)
+                if current_word_index < total_words and target_word_count > current_word_index:
+                    current_word_index += 1
+                    displayed_lines = []
+                    word_count = 0
+                    for line in lines:
+                        line_words = line[:max(0, min(len(line), current_word_index - word_count))]
+                        if line_words:
+                            displayed_lines.append(line_words)
+                        word_count += len(line)
+
+                y = screen.get_height() // 4
+                for line in displayed_lines:
+                    text = font.render(' '.join(line), True, (255, 255, 255))
+                    text_rect = text.get_rect(center=(screen.get_width() // 2, y))
+                    screen.blit(text, text_rect)
+                    y += 30
+
+                draw_button(screen, next_button, BLUE, BLUE_HOVER, translations[language]["Next"], font, pygame.mouse.get_pos())
+                pygame.display.flip()
+                clock.tick(60)
+            except Exception as e:
+                print(f"Error in intro_view loop: {str(e)}")
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if next_button.collidepoint(event.pos):
-                    stop_speech()
-                    return
+    except Exception as e:
+        print(f"Error in intro_view: {str(e)}")
+        stop_speech()
+        return
 
-        screen.fill((0, 0, 0))
-        screen.blit(pygame.transform.scale(intro_background, screen.get_size()), (0, 0))
-        elapsed_time = time.time() - start_time
-        target_word_count = int(elapsed_time / word_interval)
-        if current_word_index < total_words and target_word_count > current_word_index:
-            current_word_index += 1
-            displayed_lines = []
-            word_count = 0
-            for line in lines:
-                line_words = line[:max(0, min(len(line), current_word_index - word_count))]
-                if line_words:
-                    displayed_lines.append(line_words)
-                word_count += len(line)
-
-        text_y_start = screen.get_height() // 2 - (len(lines) * 40) // 2
-        for i, line_words in enumerate(displayed_lines):
-            text_surface = font.render(' '.join(line_words), True, WHITE)
-            screen.blit(text_surface, text_surface.get_rect(center=(screen.get_width() // 2, text_y_start + i * 40)))
-
-        mouse_pos = pygame.mouse.get_pos()
-        draw_button(screen, next_button, BLUE, BLUE_HOVER, translations[language]["Next"], font, mouse_pos)
-        pygame.display.flip()
-        clock.tick(60)
-
-def suspect_background_view(screen, language):
+def suspect_background_view(screen, language, level=1):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 28)
     interrogate_font = pygame.font.Font(None, 26)
@@ -228,41 +238,41 @@ def suspect_background_view(screen, language):
     running = True
     clock = pygame.time.Clock()
 
-    # Questions for each suspect
+    # Questions for each suspect based on level
     questions = {
         0: [
-            translations[language]["Question1_Suspect1"],
-            translations[language]["Question2_Suspect1"],
-            translations[language]["Question3_Suspect1"]
+            translations[language][f"Question1_Suspect1_Level{level}" if level == 2 else "Question1_Suspect1"],
+            translations[language][f"Question2_Suspect1_Level{level}" if level == 2 else "Question2_Suspect1"],
+            translations[language][f"Question3_Suspect1_Level{level}" if level == 2 else "Question3_Suspect1"]
         ],
         1: [
-            translations[language]["Question1_Suspect2"],
-            translations[language]["Question2_Suspect2"],
-            translations[language]["Question3_Suspect2"]
+            translations[language][f"Question1_Suspect2_Level{level}" if level == 2 else "Question1_Suspect2"],
+            translations[language][f"Question2_Suspect2_Level{level}" if level == 2 else "Question2_Suspect2"],
+            translations[language][f"Question3_Suspect2_Level{level}" if level == 2 else "Question3_Suspect2"]
         ],
         2: [
-            translations[language]["Question1_Suspect3"],
-            translations[language]["Question2_Suspect3"],
-            translations[language]["Question3_Suspect3"]
+            translations[language][f"Question1_Suspect3_Level{level}" if level == 2 else "Question1_Suspect3"],
+            translations[language][f"Question2_Suspect3_Level{level}" if level == 2 else "Question2_Suspect3"],
+            translations[language][f"Question3_Suspect3_Level{level}" if level == 2 else "Question3_Suspect3"]
         ]
     }
     
-    # Answers for each suspect
+    # Answers for each suspect based on level
     answers = {
         0: [
-            translations[language]["Answer1_Suspect1"],
-            translations[language]["Answer2_Suspect1"],
-            translations[language]["Answer3_Suspect1"]
+            translations[language][f"Answer1_Suspect1_Level{level}" if level == 2 else "Answer1_Suspect1"],
+            translations[language][f"Answer2_Suspect1_Level{level}" if level == 2 else "Answer2_Suspect1"],
+            translations[language][f"Answer3_Suspect1_Level{level}" if level == 2 else "Answer3_Suspect1"]
         ],
         1: [
-            translations[language]["Answer1_Suspect2"],
-            translations[language]["Answer2_Suspect2"],
-            translations[language]["Answer3_Suspect2"]
+            translations[language][f"Answer1_Suspect2_Level{level}" if level == 2 else "Answer1_Suspect2"],
+            translations[language][f"Answer2_Suspect2_Level{level}" if level == 2 else "Answer2_Suspect2"],
+            translations[language][f"Answer3_Suspect2_Level{level}" if level == 2 else "Answer3_Suspect2"]
         ],
         2: [
-            translations[language]["Answer1_Suspect3"],
-            translations[language]["Answer2_Suspect3"],
-            translations[language]["Answer3_Suspect3"]
+            translations[language][f"Answer1_Suspect3_Level{level}" if level == 2 else "Answer1_Suspect3"],
+            translations[language][f"Answer2_Suspect3_Level{level}" if level == 2 else "Answer2_Suspect3"],
+            translations[language][f"Answer3_Suspect3_Level{level}" if level == 2 else "Answer3_Suspect3"]
         ]
     }
 
@@ -277,7 +287,9 @@ def suspect_background_view(screen, language):
             if selected_suspect == i:
                 pygame.draw.rect(screen, GREEN, (pos[0] - 5, pos[1] - 5, 130, 170), 3, border_radius=8)
             screen.blit(pygame.transform.scale(suspect_large_image, (120, 160)), pos)
-            name_text = font.render(translations[language][f"Suspect{i+1}"], True, WHITE)
+            # Use the correct suspect name based on level
+            suspect_key = f"Suspect{i+1}_Level{level}" if level == 2 else f"Suspect{i+1}"
+            name_text = font.render(translations[language][suspect_key], True, WHITE)
             screen.blit(name_text, name_text.get_rect(center=(pos[0] + 60, pos[1] + 175)))
 
         if selected_suspect is not None:
@@ -288,7 +300,9 @@ def suspect_background_view(screen, language):
                 intro_surface = interrogate_font.render(intro_text, True, BLACK)
                 screen.blit(intro_surface, (interrogate_panel.x + 20, interrogate_panel.y + 20))
 
-            background_text = translations[language][f"Suspect{selected_suspect+1}_Background"]
+            # Use the correct background text based on level
+            background_key = f"Suspect{selected_suspect+1}_Background_Level{level}" if level == 2 else f"Suspect{selected_suspect+1}_Background"
+            background_text = translations[language][background_key]
             lines = []
             current_line = []
             words = background_text.split()
@@ -361,8 +375,10 @@ def suspect_background_view(screen, language):
                     stop_speech()
                     return
                 if interrogate_button.collidepoint(event.pos) and selected_suspect is not None:
-                    suspect_name = ["Leila", "Sami", "Karim"][selected_suspect]
-                    gender = "female" if suspect_name == "Leila" else "male"
+                    # Use the correct suspect name based on level
+                    suspect_key = f"Suspect{selected_suspect+1}_Level{level}" if level == 2 else f"Suspect{selected_suspect+1}"
+                    suspect_name = translations[language][suspect_key]
+                    gender = "female" if selected_suspect == 0 or (level == 2 and selected_suspect == 2) else "male"
                     question_text = questions[selected_suspect][question_index]
                     response_text = answers[selected_suspect][question_index]
                     question_index = (question_index + 1) % len(questions[selected_suspect])
@@ -372,14 +388,18 @@ def suspect_background_view(screen, language):
                 for i, rect in enumerate(suspect_rects):
                     if rect.collidepoint(event.pos):
                         selected_suspect = i
-                        intro_text = translations[language][f"Suspect{i+1}_Intro"]
+                        # Use the correct intro text based on level
+                        intro_key = f"Suspect{i+1}_Intro_Level{level}" if level == 2 else f"Suspect{i+1}_Intro"
+                        intro_text = translations[language][intro_key]
                         question_text = None
                         response_text = None
                         question_index = 0
                         interrogation_alpha = 0
-                        gender = "female" if i == 0 else "male"
+                        gender = "female" if i == 0 or (level == 2 and i == 2) else "male"
                         text_to_speech(intro_text, language, gender)
-                        text_to_speech(translations[language][f"Suspect{i+1}_Background"], language, gender)
+                        # Use the correct background text based on level
+                        background_key = f"Suspect{i+1}_Background_Level{level}" if level == 2 else f"Suspect{i+1}_Background"
+                        text_to_speech(translations[language][background_key], language, gender)
 
     stop_speech()
 
@@ -417,7 +437,7 @@ def lose_view(screen, language):
             if event.type == pygame.QUIT or (event.type == pygame.MOUSEBUTTONDOWN and back_button.collidepoint(event.pos)):
                 running = False
 
-def evidence_board_view(screen, language, found_clues):
+def evidence_board_view(screen, language, found_clues, level):
     WIDTH, HEIGHT = screen.get_size()
     font = pygame.font.Font(None, 36)
     back_button = pygame.Rect(0, 0, 150, 50)
@@ -448,11 +468,21 @@ def evidence_board_view(screen, language, found_clues):
         mouse_pos = pygame.mouse.get_pos()
 
         for i, clue in enumerate(["clue1", "clue2", "clue3"]):
-            if clue in found_clues:
+            clue_key = f"{clue}_level{level}"
+            if clue_key in found_clues:
                 screen.blit(clue_images[clue], clue_rects[i])
-                clue_text = font.render(translations[language][clue.capitalize()], True, WHITE)
-                screen.blit(clue_text, clue_text.get_rect(center=(clue_positions[i][0], clue_positions[i][1] + 60)))
-                if i > 0 and f"clue{i}" in found_clues:
+                translation_key = f"Clue{i+1}_Level{level}"
+                try:
+                    clue_text = font.render(translations[language][translation_key], True, WHITE)
+                    screen.blit(clue_text, clue_text.get_rect(center=(clue_positions[i][0], clue_positions[i][1] + 60)))
+                except KeyError:
+                    print(f"Missing translation for key: {translation_key}")
+                    # Fallback to a generic clue text if translation is missing
+                    clue_text = font.render(f"Clue {i+1}", True, WHITE)
+                    screen.blit(clue_text, clue_text.get_rect(center=(clue_positions[i][0], clue_positions[i][1] + 60)))
+                
+                # Draw connecting lines between found clues
+                if i > 0 and f"clue{i}_level{level}" in found_clues:
                     pygame.draw.line(screen, RED, clue_positions[i-1], clue_positions[i], 3)
 
         draw_button(screen, back_button, RED, RED_HOVER, translations[language]["Back"], font, mouse_pos)

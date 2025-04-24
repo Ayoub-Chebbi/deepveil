@@ -1,15 +1,34 @@
+import pygame
+
+# Window dimensions
 WIDTH = 1000
 HEIGHT = 700
 
+# Define colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+DARK_GRAY = (50, 50, 50)
+LIGHT_GRAY = (200, 200, 200)
+BLUE = (0, 120, 255)
+BLUE_HOVER = (0, 180, 255)
+RED = (255, 0, 0)
+RED_HOVER = (255, 100, 100)
+GREEN_HOVER = (100, 255, 100)
+YELLOW = (255, 255, 0)
+INTERROGATE_BG = (240, 240, 240)
+INTERROGATE_TEXT = (40, 40, 40)
+
 translations = {
     "English": {
+        # Level 1
         "Start": "Start",
         "Language": "Language",
         "Points": "Points",
         "Mission": "Mission",
-        "Objective1": "Find the logbook",
-        "Objective2": "Examine the glass shard",
-        "Objective3": "Locate the hidden note",
+        "Objective1_Level1": "Find the logbook",
+        "Objective2_Level1": "Examine the glass shard",
+        "Objective3_Level1": "Locate the hidden note",
         "Next": "Next",
         "Explore Suspect Background": "Explore Suspect Background",
         "Select a suspect!": "Select a suspect!",
@@ -18,10 +37,11 @@ translations = {
         "Continue": "Continue",
         "You've Won! Congratulations!": "You've Won! Congratulations!",
         "You've Lost! Try Again!": "You've Lost! Try Again!",
-        "Clue1": "A torn page with cryptic symbols",
-        "Clue2": "A glass shard with a strange mark",
-        "Clue3": "A note hinting at a secret meeting",
-        "Case Text": "The Alabaster Crown, a priceless artifact from the ancient city of Zafara, vanished from the Grand Museum under mysterious circumstances. Discovered by archaeologist Leila Mansour, it was said to hold secrets of a lost civilization. Security was tight, yet the crown disappeared without a trace during a private exhibit. Rumors swirl of insider involvement, a hidden agenda, or even a collector's greed. As lead detective, your task is to navigate the web of clues, interrogate suspects, and uncover the truth before the trail goes cold.",
+        "Clue1_Level1": "A torn page with cryptic symbols",
+        "Clue2_Level1": "A glass shard with a strange mark",
+        "Clue3_Level1": "A note hinting at a secret meeting",
+        "Case Text_Level1": "The Alabaster Crown, a priceless artifact from the ancient city of Zafara, vanished from the Grand Museum under mysterious circumstances. Discovered by archaeologist Leila Mansour, it was said to hold secrets of a lost civilization. Security was tight, yet the crown disappeared without a trace during a private exhibit. Rumors swirl of insider involvement, a hidden agenda, or even a collector's greed. As lead detective, your task is to navigate the web of clues, interrogate suspects, and uncover the truth before the trail goes cold.",
+        # Suspect details (shared across levels)
         "Suspect1": "Leila",
         "Suspect2": "Sami",
         "Suspect3": "Karim",
@@ -32,9 +52,6 @@ translations = {
         "Suspect2_Background": "Sami Al-Rashid, 45, is a museum security guard with 15 years of service. Known for his quiet demeanor, he's been struggling with a gambling debt that's spiraled out of control. On the night of the theft, he was stationed near the exhibit but claims he saw nothing unusual. His financial troubles have raised eyebrows, and coworkers note he's been unusually nervous, often checking his phone during shifts.",
         "Suspect3_Background": "Karim Haddad, 52, is a wealthy art collector with a penchant for rare antiquities. He attended the private exhibit and openly admired the Alabaster Crown, even inquiring about its market value weeks prior. His collection includes items of questionable origin, and he's rumored to have connections in the black market. Charismatic but evasive, Karim insists he was merely a guest that night, but his interest in the crown was unmistakable.",
         "Move to the yellow light": "Move to the yellow light",
-        "Clue1": "A torn page with cryptic symbols",
-        "Clue2": "A glass shard with a strange mark",
-        "Clue3": "A note hinting at a secret meeting",
         "Question1_Suspect1": "Where were you when the crown was stolen?",
         "Question2_Suspect1": "Why were you at the museum so late?",
         "Question3_Suspect1": "What do you know about the crown's symbols?",
@@ -52,16 +69,53 @@ translations = {
         "Question3_Suspect3": "Where were you when the alarms went off?",
         "Answer1_Suspect3": "It's a beautiful piece, nothing more.",
         "Answer2_Suspect3": "Just some business contacts, unrelated.",
-        "Answer3_Suspect3": "I was already leaving, didn't hear them."
+        "Answer3_Suspect3": "I was already leaving, didn't hear them.",
+        # Level 2
+        "Objective1_Level2": "Find the blood-stained cloth",
+        "Objective2_Level2": "Examine the broken key",
+        "Objective3_Level2": "Locate the coded letter",
+        "Clue1_Level2": "A cloth stained with dried blood",
+        "Clue2_Level2": "A broken key with an unusual engraving",
+        "Clue3_Level2": "A letter with a coded message",
+        "Case Text_Level2": "The Codex of Elara, a rare manuscript rumored to contain forbidden knowledge, was stolen from a private library owned by a reclusive scholar. The library's advanced security system was bypassed with alarming precision, suggesting an inside job. The manuscript's disappearance has sparked rumors of a secret society or a rival collector's involvement. As lead detective, you must uncover the clues, interrogate suspects, and solve the mystery before the codex is lost forever.",
+        # Level 2 Suspect details
+        "Suspect1_Level2": "Dr. Sarah Chen",
+        "Suspect2_Level2": "Marcus Blackwood",
+        "Suspect3_Level2": "Elena Vasquez",
+        "Suspect1_Intro_Level2": "Dr. Chen appears distracted, constantly checking her phone.",
+        "Suspect2_Intro_Level2": "Blackwood seems overly confident, almost challenging.",
+        "Suspect3_Intro_Level2": "Vasquez is visibly anxious, wringing her hands.",
+        "Suspect1_Background_Level2": "Dr. Sarah Chen, 42, is a cryptographer and former library security consultant. She helped design the library's security system but was recently fired after a dispute with the owner about 'inappropriate access attempts.' Her expertise in ancient codes and her knowledge of the security system make her a prime suspect. Colleagues mention her growing obsession with the Codex's supposed hidden messages.",
+        "Suspect2_Background_Level2": "Marcus Blackwood, 55, is a wealthy antiquities dealer with a controversial reputation. He's known for acquiring rare manuscripts through questionable means and has publicly expressed interest in the Codex. His recent financial troubles and connections to underground collectors have raised suspicions. He was seen arguing with the library owner days before the theft.",
+        "Suspect3_Background_Level2": "Elena Vasquez, 35, is the library's head curator and the owner's protégé. She discovered the Codex during an archaeological expedition and has dedicated years to studying it. Her close relationship with the owner and extensive knowledge of the library's layout make her both a valuable resource and a potential suspect. Recent changes in her behavior suggest she's hiding something.",
+        "Question1_Suspect1_Level2": "Why were you fired from the library?",
+        "Question2_Suspect1_Level2": "What do you know about the Codex's security system?",
+        "Question3_Suspect1_Level2": "Have you attempted to access the library recently?",
+        "Answer1_Suspect1_Level2": "It was a misunderstanding about system maintenance protocols.",
+        "Answer2_Suspect1_Level2": "I designed it, but the final implementation was modified without my knowledge.",
+        "Answer3_Suspect1_Level2": "No, I haven't been near the library since my dismissal.",
+        "Question1_Suspect2_Level2": "Why were you arguing with the library owner?",
+        "Question2_Suspect2_Level2": "What's your interest in the Codex?",
+        "Question3_Suspect2_Level2": "Can you account for your whereabouts during the theft?",
+        "Answer1_Suspect2_Level2": "Business dispute, nothing more. The owner was being unreasonable.",
+        "Answer2_Suspect2_Level2": "It's a significant historical artifact. I wanted to study it.",
+        "Answer3_Suspect2_Level2": "I was at a private auction in another city.",
+        "Question1_Suspect3_Level2": "How did you discover the Codex?",
+        "Question2_Suspect3_Level2": "Why have you been acting strangely lately?",
+        "Question3_Suspect3_Level2": "What's your relationship with the library owner?",
+        "Answer1_Suspect3_Level2": "During an expedition to the Elara ruins. It was a remarkable find.",
+        "Answer2_Suspect3_Level2": "I've been worried about the Codex's safety. There were threats.",
+        "Answer3_Suspect3_Level2": "He's been my mentor for years. I owe him everything.",
     },
     "Arabic": {
+        # Level 1
         "Start": "ابدأ",
         "Language": "اللغة",
         "Points": "النقاط",
         "Mission": "المهمة",
-        "Objective1": "ابحث عن الدفتر",
-        "Objective2": "افحص شظية الزجاج",
-        "Objective3": "حدد موقع الملاحظة المخفية",
+        "Objective1_Level1": "ابحث عن الدفتر",
+        "Objective2_Level1": "افحص شظية الزجاج",
+        "Objective3_Level1": "حدد موقع الملاحظة المخفية",
         "Next": "التالي",
         "Explore Suspect Background": "استكشف خلفية المشتبه به",
         "Select a suspect!": "اختر مشتبهًا به!",
@@ -70,10 +124,11 @@ translations = {
         "Continue": "استمر",
         "You've Won! Congratulations!": "لقد فزت! تهانينا!",
         "You've Lost! Try Again!": "لقد خسرت! حاول مرة أخرى!",
-        "Clue1": "صفحة ممزقة تحمل رموزًا غامضة",
-        "Clue2": "شظية زجاج تحمل علامة غريبة",
-        "Clue3": "ملاحظة تشير إلى اجتماع سري",
-        "Case Text": "اختفى تاج الألباستر، قطعة أثرية لا تقدر بثمن من مدينة زفارة القديمة، من المتحف الكبير في ظروف غامضة. اكتشفتها عالمة الآثار ليلى منصور، ويقال إنها تحمل أسرار حضارة مفقودة. كانت الأمن مشددًا، لكن التاج اختفى دون أثر خلال معرض خاص. تتردد شائعات عن تورط داخلي، أجندة خفية، أو حتى جشع جامع. بصفتك المحقق الرئيسي، مهمتك هي التنقل عبر شبكة الأدلة، استجواب المشتبه بهم، وكشف الحقيقة قبل أن يبرد الأثر.",
+        "Clue1_Level1": "صفحة ممزقة تحمل رموزًا غامضة",
+        "Clue2_Level1": "شظية زجاج تحمل علامة غريبة",
+        "Clue3_Level1": "ملاحظة تشير إلى اجتماع سري",
+        "Case Text_Level1": "اختفى تاج الألباستر، قطعة أثرية لا تقدر بثمن من مدينة زفارة القديمة، من المتحف الكبير في ظروف غامضة. اكتشفتها عالمة الآثار ليلى منصور، ويقال إنها تحمل أسرار حضارة مفقودة. كانت الأمن مشددًا، لكن التاج اختفى دون أثر خلال معرض خاص. تتردد شائعات عن تورط داخلي، أجندة خفية، أو حتى جشع جامع. بصفتك المحقق الرئيسي، مهمتك هي التنقل عبر شبكة الأدلة، استجواب المشتبه بهم، وكشف الحقيقة قبل أن يبرد الأثر.",
+        # Suspect details (shared across levels)
         "Suspect1": "ليلى",
         "Suspect2": "سامي",
         "Suspect3": "كريم",
@@ -84,9 +139,6 @@ translations = {
         "Suspect2_Background": "سامي الرشيد، 45 عامًا، حارس أمن في المتحف بخدمة 15 عامًا. يُعرف بهدوئه، لكنه يعاني من ديون قمار خارجة عن السيطرة. في ليلة السرقة، كان متمركزًا بالقرب من المعرض لكنه يدعي أنه لم يرَ شيئًا غير عادي. أثارت مشاكله المالية الشكوك، ويلاحظ زملاؤه أنه كان متوترًا بشكل غير معتاد، غالبًا ما يتحقق من هاتفه أثناء نوباته.",
         "Suspect3_Background": "كريم حداد، 52 عامًا، جامع أعمال فنية ثري يميل إلى الأثار النادرة. حضر المعرض الخاص وأعجب علنًا بتاج الألباستر، حتى استفسر عن قيمته السوقية قبل أسابيع. تشمل مجموعته أغراضًا ذات أصول مشكوك فيها، وترددت شائعات عن علاقاته في السوق السوداء. ساحر لكنه مراوغ، يصر كريم على أنه كان مجرد ضيف تلك الليلة، لكن اهتمامه بالتاج كان لافتًا.",
         "Move to the yellow light": "تحرك نحو الضوء الأصفر",
-        "Clue1": "صفحة ممزقة برموز غامضة",
-        "Clue2": "شظية زجاجية بعلامة غريبة",
-        "Clue3": "ملاحظة تشير إلى اجتماع سري",
         "Question1_Suspect1": "أين كنتِ عندما سُرق التاج؟",
         "Question2_Suspect1": "لماذا كنتِ في المتحف متأخرًا؟",
         "Question3_Suspect1": "ماذا تعرفين عن رموز التاج؟",
@@ -101,23 +153,45 @@ translations = {
         "Answer3_Suspect2": "لا، فقط موظفو المتحف المعتادون.",
         "Question1_Suspect3": "لماذا كنت مهتمًا جدًا بالتاج؟",
         "Question2_Suspect3": "من التقيت قبل السرقة؟",
-        "Answer3_Suspect3": "أين كنت عندما انطلقت الأجهزة الإنذارية؟",
+        "Question3_Suspect3": "أين كنت عندما انطلقت الأجهزة الإنذارية؟",
         "Answer1_Suspect3": "إنه قطعة رائعة، لا أكثر.",
         "Answer2_Suspect3": "فقط بعض جهات الاتصال التجارية، لا علاقة لها.",
-        "Answer3_Suspect3": "كنت أغادر بالفعل، لم أسمعها."
+        "Answer3_Suspect3": "كنت أغادر بالفعل، لم أسمعها.",
+        # Level 2
+        "Objective1_Level2": "ابحث عن القماش الملطخ بالدم",
+        "Objective2_Level2": "افحص المفتاح المكسور",
+        "Objective3_Level2": "حدد موقع الرسالة المشفرة",
+        "Clue1_Level2": "قماش ملطخ بالدم الجاف",
+        "Clue2_Level2": "مفتاح مكسور بنقش غير عادي",
+        "Clue3_Level2": "رسالة تحتوي على رسالة مشفرة",
+        "Case Text_Level2": "تمت سرقة مخطوطة إيلارا، وهي مخطوطة نادرة يُشاع أنها تحتوي على معرفة ممنوعة، من مكتبة خاصة يملكها عالم منعزل. تم تجاوز نظام الأمان المتقدم في المكتبة بدقة مذهلة، مما يشير إلى عملية داخلية. أثار اختفاء المخطوطة شائعات عن تورط جمعية سرية أو جامع منافس. بصفتك المحقق الرئيسي، يجب عليك كشف الأدلة، استجواب المشتبه بهم، وحل اللغز قبل أن يُفقد المخطوط إلى الأبد.",
+        # Level 2 Suspect details
+        "Suspect1_Level2": "د. سارة تشن",
+        "Suspect2_Level2": "ماركوس بلاك وود",
+        "Suspect3_Level2": "إيلينا فاسكيز",
+        "Suspect1_Intro_Level2": "د. تشن تبدو مشتتة، تتحقق من هاتفها باستمرار.",
+        "Suspect2_Intro_Level2": "بلاك وود يبدو واثقًا بشكل مفرط، وكأنه يتحدى.",
+        "Suspect3_Intro_Level2": "فاسكيز تبدو قلقة بشكل واضح، تدلك يديها.",
+        "Suspect1_Background_Level2": "د. سارة تشن، 42 عامًا، خبيرة في فك التشفير ومستشارة أمنية سابقة في المكتبة. ساعدت في تصميم نظام الأمان في المكتبة ولكن تم طردها مؤخرًا بعد خلاف مع المالك حول 'محاولات وصول غير مناسبة.' خبرتها في الأكواد القديمة ومعرفتها بنظام الأمان تجعلها مشتبهًا بها رئيسيًا. يذكر زملاؤها هوسها المتزايد بالرسائل المخفية المزعومة في المخطوطة.",
+        "Suspect2_Background_Level2": "ماركوس بلاك وود، 55 عامًا، تاجر آثار ثري يتمتع بسمعة مثيرة للجدل. معروف باقتناء مخطوطات نادرة بوسائل مشكوك فيها وأعرب علنًا عن اهتمامه بالمخطوطة. مشاكله المالية الأخيرة وعلاقاته مع جامعي التحف السريين أثارت الشكوك. شوهد يتجادل مع مالك المكتبة قبل أيام من السرقة.",
+        "Suspect3_Background_Level2": "إيلينا فاسكيز، 35 عامًا، أمينة المكتبة الرئيسية وتلميذة المالك. اكتشفت المخطوطة خلال رحلة استكشافية أثرية وك dedicated سنوات لدراستها. علاقتها الوثيقة مع المالك ومعرفتها الواسعة بتخطيط المكتبة تجعلها موردًا قيمًا ومشتبهًا بها محتملًا. التغييرات الأخيرة في سلوكها تشير إلى أنها تخفي شيئًا.",
+        "Question1_Suspect1_Level2": "لماذا تم طردك من المكتبة؟",
+        "Question2_Suspect1_Level2": "ماذا تعرفين عن نظام أمان المخطوطة؟",
+        "Question3_Suspect1_Level2": "هل حاولت الوصول إلى المكتبة مؤخرًا؟",
+        "Answer1_Suspect1_Level2": "كان سوء فهم حول بروتوكولات صيانة النظام.",
+        "Answer2_Suspect1_Level2": "صممته، لكن التنفيذ النهائي تم تعديله دون علمي.",
+        "Answer3_Suspect1_Level2": "لا، لم أكن قريبة من المكتبة منذ إقالتي.",
+        "Question1_Suspect2_Level2": "لماذا كنت تتجادل مع مالك المكتبة؟",
+        "Question2_Suspect2_Level2": "ما هو اهتمامك بالمخطوطة؟",
+        "Question3_Suspect2_Level2": "هل يمكنك تحديد مكانك أثناء السرقة؟",
+        "Answer1_Suspect2_Level2": "نزاع تجاري، لا أكثر. المالك كان غير معقول.",
+        "Answer2_Suspect2_Level2": "إنها قطعة أثرية تاريخية مهمة. أردت دراستها.",
+        "Answer3_Suspect2_Level2": "كنت في مزاد خاص في مدينة أخرى.",
+        "Question1_Suspect3_Level2": "كيف اكتشفت المخطوطة؟",
+        "Question2_Suspect3_Level2": "لماذا كنت تتصرفين بشكل غريب مؤخرًا؟",
+        "Question3_Suspect3_Level2": "ما هي علاقتك مع مالك المكتبة؟",
+        "Answer1_Suspect3_Level2": "خلال رحلة استكشافية إلى أطلال إيلارا. كان اكتشافًا رائعًا.",
+        "Answer2_Suspect3_Level2": "كنت قلقة بشأن سلامة المخطوطة. كانت هناك تهديدات.",
+        "Answer3_Suspect3_Level2": "كان مرشدي لسنوات. أنا مدينة له بكل شيء.",
     }
 }
-
-GREEN = (0, 255, 0)
-WHITE = (255, 255, 255)
-DARK_GRAY = (50, 50, 50)
-LIGHT_GRAY = (200, 200, 200)
-BLUE = (0, 120, 255)
-BLUE_HOVER = (0, 180, 255)
-RED = (255, 0, 0)
-RED_HOVER = (255, 100, 100)
-GREEN_HOVER = (100, 255, 100)
-YELLOW = (255, 255, 0)
-BLACK = (0, 0, 0)
-INTERROGATE_BG = (240, 240, 240)
-INTERROGATE_TEXT = (40, 40, 40)
