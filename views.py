@@ -443,50 +443,82 @@ def evidence_board_view(screen, language, found_clues, level):
     title_font = pygame.font.Font(None, 48)
     back_button = pygame.Rect(0, 0, 150, 50)
     back_button.center = (WIDTH // 2, HEIGHT - 50)
-    
-    # Create a semi-transparent overlay for the board
+
+    # Semi-transparent overlay
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
-    
-    # Create the main board surface with a modern style
+
+    # Main board
     board_width = WIDTH - 200
     board_height = HEIGHT - 200
     board = pygame.Surface((board_width, board_height), pygame.SRCALPHA)
     board.fill((30, 30, 30, 220))
-    
-    # Add a border to the board
     pygame.draw.rect(board, (100, 100, 100), (0, 0, board_width, board_height), 3, border_radius=15)
-    
-    # Calculate clue positions relative to the board with more spacing
+
+    # Clue positions (spaced evenly across the board)
     clue_positions = [
-        (board_width // 4, board_height // 3),
-        (board_width // 2, board_height // 3),
-        (3 * board_width // 4, board_height // 3)
+        (board_width // 4, board_height // 2),
+        (board_width // 2, board_height // 2),
+        (3 * board_width // 4, board_height // 2)
     ]
     clue_rects = [pygame.Rect(x - 50, y - 50, 100, 100) for x, y in clue_positions]
-    
-    # Create clue images with improved visuals
-    clue_images = {
-        "clue1": pygame.Surface((60, 80), pygame.SRCALPHA),
-        "clue2": pygame.Surface((50, 70), pygame.SRCALPHA),
-        "clue3": pygame.Surface((70, 50), pygame.SRCALPHA)
-    }
-    
-    # Style clue1 (document)
-    clue_images["clue1"].fill((200, 180, 150, 255))
-    pygame.draw.rect(clue_images["clue1"], (100, 80, 50), (0, 0, 60, 80), 2)
-    pygame.draw.line(clue_images["clue1"], (100, 80, 50), (10, 20), (50, 20), 2)
-    pygame.draw.line(clue_images["clue1"], (100, 80, 50), (10, 40), (50, 40), 2)
-    
-    # Style clue2 (glass)
-    pygame.draw.polygon(clue_images["clue2"], (200, 230, 255, 200), [(25, 0), (50, 20), (40, 70), (10, 70), (0, 20)])
-    pygame.draw.polygon(clue_images["clue2"], (150, 200, 255), [(25, 0), (50, 20), (40, 70), (10, 70), (0, 20)], 2)
-    
-    # Style clue3 (note)
-    clue_images["clue3"].fill((255, 255, 240, 255))
-    pygame.draw.rect(clue_images["clue3"], (100, 80, 50), (0, 0, 70, 50), 2)
-    pygame.draw.line(clue_images["clue3"], (100, 80, 50), (10, 25), (60, 25), 1)
-    
+
+    # Clue images (standardized size for consistency)
+    clue_size = (80, 80)
+    clue_images = {}
+    if level == 1:
+        clue_images = {
+            "clue1_level1": pygame.Surface(clue_size, pygame.SRCALPHA),  # Document
+            "clue2_level1": pygame.Surface(clue_size, pygame.SRCALPHA),  # Glass
+            "clue3_level1": pygame.Surface(clue_size, pygame.SRCALPHA)   # Note
+        }
+        # Document
+        clue_images["clue1_level1"].fill((200, 180, 150))
+        pygame.draw.rect(clue_images["clue1_level1"], (100, 80, 50), (0, 0, 80, 80), 2)
+        pygame.draw.line(clue_images["clue1_level1"], (100, 80, 50), (10, 20), (70, 20), 2)
+        pygame.draw.line(clue_images["clue1_level1"], (100, 80, 50), (10, 40), (70, 40), 2)
+        # Glass
+        pygame.draw.polygon(clue_images["clue2_level1"], (200, 230, 255, 200), [(40, 0), (80, 20), (60, 80), (20, 80), (0, 20)])
+        pygame.draw.polygon(clue_images["clue2_level1"], (150, 200, 255), [(40, 0), (80, 20), (60, 80), (20, 80), (0, 20)], 2)
+        # Note
+        clue_images["clue3_level1"].fill((255, 255, 240))
+        pygame.draw.rect(clue_images["clue3_level1"], (100, 80, 50), (0, 0, 80, 80), 2)
+        pygame.draw.line(clue_images["clue3_level1"], (100, 80, 50), (10, 40), (70, 40), 1)
+    else:
+        clue_images = {
+            "clue1_level2": pygame.Surface(clue_size, pygame.SRCALPHA),  # Key
+            "clue2_level2": pygame.Surface(clue_size, pygame.SRCALPHA),  # Letter
+            "clue3_level2": pygame.Surface(clue_size, pygame.SRCALPHA)   # Cloth
+        }
+        # Key
+        clue_images["clue1_level2"].fill((200, 200, 150))
+        pygame.draw.rect(clue_images["clue1_level2"], (150, 150, 100), (0, 0, 80, 80), 2)
+        pygame.draw.circle(clue_images["clue1_level2"], (150, 150, 100), (40, 40), 20, 2)
+        pygame.draw.rect(clue_images["clue1_level2"], (150, 150, 100), (60, 30, 20, 20), 2)
+        # Letter
+        clue_images["clue2_level2"].fill((220, 220, 220))
+        pygame.draw.rect(clue_images["clue2_level2"], (150, 150, 150), (0, 0, 80, 80), 2)
+        pygame.draw.line(clue_images["clue2_level2"], (150, 150, 150), (20, 20), (60, 20), 2)
+        pygame.draw.line(clue_images["clue2_level2"], (150, 150, 150), (20, 40), (60, 40), 2)
+        # Cloth
+        clue_images["clue3_level2"].fill((180, 160, 140))
+        pygame.draw.rect(clue_images["clue3_level2"], (120, 100, 80), (0, 0, 80, 80), 2)
+        pygame.draw.line(clue_images["clue3_level2"], (120, 100, 80), (20, 20), (60, 20), 1)
+        pygame.draw.line(clue_images["clue3_level2"], (120, 100, 80), (20, 60), (60, 60), 1)
+
+    # Animation variables
+    clue_alpha = 0
+    fade_in_speed = 5
+    start_time = pygame.time.get_ticks()
+    delay_before_show = 1000  # 1-second delay
+
+    # Normalize found_clues
+    normalized_found_clues = []
+    for clue in found_clues:
+        if clue.startswith(("clue", "Clue")) and "_level" in clue.lower():
+            normalized_found_clues.append(clue.lower())
+    print(f"Level: {level}, Found clues: {found_clues}, Normalized: {normalized_found_clues}")
+
     running = True
     clock = pygame.time.Clock()
 
@@ -494,57 +526,58 @@ def evidence_board_view(screen, language, found_clues, level):
 
     while running:
         speech_engine.iterate()
-        screen.fill((20, 20, 20))  # Dark background
+        screen.fill((20, 20, 20))
         screen.blit(overlay, (0, 0))
-        
-        # Position the board in the center
+
+        # Center the board
         board_rect = board.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         screen.blit(board, board_rect)
-        
-        # Draw the title - handle missing translation gracefully
-        try:
-            title_text = title_font.render(translations[language]["Evidence Board"], True, (0, 200, 255))
-        except KeyError:
-            # Default title if translation is missing
-            title_text = title_font.render("Evidence Board", True, (0, 200, 255))
-        title_rect = title_text.get_rect(center=(WIDTH // 2, board_rect.y + 50))
-        screen.blit(title_text, title_rect)
-        
+
+        # Draw title
+        title_text = title_font.render(translations.get(language, {}).get("Evidence Board", "Evidence Board"), True, WHITE)
+        screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, board_rect.y + 50)))
+
         mouse_pos = pygame.mouse.get_pos()
 
-        # Draw clues and connecting lines
+        # Fade-in animation
+        current_time = pygame.time.get_ticks()
+        if current_time - start_time >= delay_before_show:
+            clue_alpha = min(clue_alpha + fade_in_speed, 255)
+
+        # Draw clues
         for i in range(3):
             clue_key = f"clue{i+1}_level{level}"
-            if clue_key in found_clues:
-                # Calculate position relative to the board
+            if clue_key in normalized_found_clues:
+                # Calculate position
                 pos_x = board_rect.x + clue_positions[i][0]
                 pos_y = board_rect.y + clue_positions[i][1]
-                
-                # Draw the clue image
-                screen.blit(clue_images[f"clue{i+1}"], (pos_x - 30, pos_y - 40))
-                
-                # Draw the clue text with better spacing and color
-                translation_key = f"Clue{i+1}_Level{level}"
-                try:
-                    clue_text = font.render(translations[language][translation_key], True, (0, 200, 255))
-                    text_rect = clue_text.get_rect(center=(pos_x, pos_y + 80))  # Increased spacing
-                    screen.blit(clue_text, text_rect)
-                except KeyError:
-                    print(f"Missing translation for key: {translation_key}")
-                    clue_text = font.render(f"Clue {i+1}", True, (0, 200, 255))
-                    text_rect = clue_text.get_rect(center=(pos_x, pos_y + 80))  # Increased spacing
-                    screen.blit(clue_text, text_rect)
 
-        # Draw the back button with improved color
-        draw_button(screen, back_button, (0, 100, 200), (0, 150, 255), translations[language]["Back"], font, mouse_pos)
-        
+                # Debug rectangle to visualize clue position
+                pygame.draw.rect(screen, (255, 0, 0), (pos_x - 40, pos_y - 40, 80, 80), 1)
+
+                # Draw clue image
+                temp_clue = clue_images[clue_key].copy()
+                temp_clue.set_alpha(clue_alpha)
+                screen.blit(temp_clue, (pos_x - 40, pos_y - 40))
+
+                # Draw clue text below the image with spacing
+                clue_text = translations.get(language, {}).get(f"Clue{i+1}_Level{level}", f"Clue {i+1}")
+                text_surface = font.render(clue_text, True, WHITE)
+                text_surface.set_alpha(clue_alpha)
+                text_rect = text_surface.get_rect(center=(pos_x, pos_y + 60))  # 60px below clue image
+                screen.blit(text_surface, text_rect)
+
+        # Draw back button
+        draw_button(screen, back_button, BLUE, BLUE_HOVER, translations.get(language, {}).get("Back", "Back"), font, mouse_pos)
+
         pygame.display.flip()
         clock.tick(60)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(event.pos):
-                    stop_speech()
                     return
