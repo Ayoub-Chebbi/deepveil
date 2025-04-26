@@ -26,7 +26,95 @@ def load_settings():
                     settings["selected_voice"] = value
     return settings
 
-def main_menu(screen):
+def welcome_view(screen, language):
+    font = pygame.font.Font(None, 48)
+    description_font = pygame.font.Font(None, 36)
+    continue_button = pygame.Rect(0, 0, 200, 60)
+    continue_button.center = (screen.get_width() // 2, screen.get_height() // 2 + 150)
+    
+    # Welcome message and description
+    welcome_text = translations.get(language, {}).get("Welcome to DeepVeil", "Welcome to DeepVeil")
+    description_text = translations.get(language, {}).get(
+        "Game Description",
+        "Step into the world of DeepVeil, a detective adventure where you solve mysteries by collecting clues, interrogating suspects, and uncovering hidden truths. Use your skills to crack the case!"
+    )
+    
+    # Split description into lines for better display
+    max_width = screen.get_width() - 100
+    words = description_text.split()
+    lines = []
+    current_line = []
+    for word in words:
+        test_line = ' '.join(current_line + [word])
+        if description_font.size(test_line)[0] <= max_width:
+            current_line.append(word)
+        else:
+            lines.append(' '.join(current_line))
+            current_line = [word]
+    lines.append(' '.join(current_line))
+    
+    # Animation variables
+    text_alpha = 0
+    fade_in_speed = 5
+    start_time = pygame.time.get_ticks()
+    delay_before_show = 500  # 0.5-second delay
+    
+    # Semi-transparent overlay
+    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))
+    
+    # TTS
+    text_to_speech(f"{welcome_text}. {description_text}", language)
+    
+    running = True
+    clock = pygame.time.Clock()
+    
+    while running:
+        speech_engine.iterate()
+        screen.fill((20, 20, 20))
+        screen.blit(pygame.transform.scale(intro_background, screen.get_size()), (0, 0))
+        screen.blit(overlay, (0, 0))
+        
+        # Fade-in animation
+        current_time = pygame.time.get_ticks()
+        if current_time - start_time >= delay_before_show:
+            text_alpha = min(text_alpha + fade_in_speed, 255)
+        
+        # Draw welcome title
+        title_surface = font.render(welcome_text, True, WHITE)
+        title_surface.set_alpha(text_alpha)
+        screen.blit(title_surface, title_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4)))
+        
+        # Draw description
+        y = screen.get_height() // 3
+        for line in lines:
+            text_surface = description_font.render(line, True, WHITE)
+            text_surface.set_alpha(text_alpha)
+            screen.blit(text_surface, text_surface.get_rect(center=(screen.get_width() // 2, y)))
+            y += 40
+        
+        # Draw continue button
+        mouse_pos = pygame.mouse.get_pos()
+        draw_button(screen, continue_button, BLUE, BLUE_HOVER, translations.get(language, {}).get("Continue", "Continue"), font, mouse_pos)
+        
+        pygame.display.flip()
+        clock.tick(60)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                stop_speech()
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if continue_button.collidepoint(event.pos):
+                    stop_speech()
+                    return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                stop_speech()
+                return
+    
+    stop_speech()
+
+def main_menu(screen, language="English"):
     from game import run_game
     font = pygame.font.Font(None, 36)
     button_width, button_height = 250, 60
@@ -37,7 +125,7 @@ def main_menu(screen):
     sound_button = pygame.Rect(0, 0, button_width, button_height)
     sound_button.center = (screen.get_width() // 2, screen.get_height() // 2 + 80)
     languages = ["English", "Arabic"]
-    language_selected = languages[0]
+    language_selected = language
     dropdown_open = False
     sound_open = False
     settings = load_settings()

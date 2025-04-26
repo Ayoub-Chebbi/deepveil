@@ -3,7 +3,7 @@ import sys
 import math
 import random
 from config import WIDTH, HEIGHT, translations, GREEN, WHITE, DARK_GRAY, LIGHT_GRAY, BLUE, BLUE_HOVER, RED, YELLOW, BLACK
-from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1, detective_bg2, detective_bg3, hero_image, logbook, glass, note, cloth, key, letter
+from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1, detective_bg2, detective_bg3, hero_image, logbook, glass, note, cloth, key, letter, room1, room2, room3
 from ai import suspect_ai, get_smart_hint
 from speech import text_to_speech
 from utils import draw_button
@@ -963,7 +963,9 @@ def pin_view_1(screen, points, found_clues, language, level):
     text_to_speech(translations[language]["Objective1_Level" + str(level)], language)
 
     while running:
-        screen.blit(pygame.transform.scale(detective_bg1, (WIDTH, HEIGHT)), (0, 0))
+        # Use room1 for level 2, detective_bg1 for level 1
+        background = room1 if level == 2 else detective_bg1
+        screen.blit(pygame.transform.scale(background, (WIDTH, HEIGHT)), (0, 0))
         pulse_phase += pulse_speed
         glow_alpha = 128 + int(127 * math.sin(pulse_phase))
         
@@ -1052,7 +1054,9 @@ def pin_view_2(screen, points, found_clues, language, level):
     text_to_speech(translations[language]["Objective2_Level" + str(level)], language)
 
     while running:
-        screen.blit(pygame.transform.scale(detective_bg2, (WIDTH, HEIGHT)), (0, 0))
+        # Use room2 for level 2, detective_bg2 for level 1
+        background = room2 if level == 2 else detective_bg2
+        screen.blit(pygame.transform.scale(background, (WIDTH, HEIGHT)), (0, 0))
         pulse_phase += pulse_speed
         glow_alpha = 128 + int(127 * math.sin(pulse_phase))
         
@@ -1141,7 +1145,9 @@ def pin_view_3(screen, points, found_clues, language, level):
     text_to_speech(translations[language]["Objective3_Level" + str(level)], language)
 
     while running:
-        screen.blit(pygame.transform.scale(detective_bg3, (WIDTH, HEIGHT)), (0, 0))
+        # Use room3 for level 2, detective_bg3 for level 1
+        background = room3 if level == 2 else detective_bg3
+        screen.blit(pygame.transform.scale(background, (WIDTH, HEIGHT)), (0, 0))
         pulse_phase += pulse_speed
         glow_alpha = 128 + int(127 * math.sin(pulse_phase))
         

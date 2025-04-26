@@ -28,6 +28,10 @@ won_bg = load_image_with_opacity("assets/won.jpg")
 lost_bg = load_image_with_opacity("assets/lost.png")
 menu_bg = load_image_with_opacity("assets/inspectorStart.png") 
 hallway_image = pygame.image.load("assets/hallway.png")
+room1 = load_image_with_opacity("assets/room21.png")
+room2 = load_image_with_opacity("assets/room22.png")
+room3 = load_image_with_opacity("assets/room23.png")
+
 
 # Level 1 clue assets
 logbook = pygame.Surface((60, 80), pygame.SRCALPHA)
