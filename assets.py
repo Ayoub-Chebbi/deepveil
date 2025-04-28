@@ -31,7 +31,7 @@ hallway_image = pygame.image.load("assets/hallway.png")
 room1 = load_image_with_opacity("assets/room21.png")
 room2 = load_image_with_opacity("assets/room22.png")
 room3 = load_image_with_opacity("assets/room23.png")
-
+text_back = load_image_with_opacity("assets/text.png")
 
 # Level 1 clue assets
 logbook = pygame.Surface((60, 80), pygame.SRCALPHA)

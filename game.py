@@ -3,10 +3,22 @@ import sys
 import math
 import random
 from config import WIDTH, HEIGHT, translations, GREEN, WHITE, DARK_GRAY, LIGHT_GRAY, BLUE, BLUE_HOVER, RED, YELLOW, BLACK
-from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1, detective_bg2, detective_bg3, hero_image, logbook, glass, note, cloth, key, letter, room1, room2, room3
+from assets import background_image, new_background_image, pin_image, suspect_image, level_image, hallway_image, detective_bg1, detective_bg2, detective_bg3, hero_image, logbook, glass, note, cloth, key, letter, room1, room2, room3, text_back
 from ai import suspect_ai, get_smart_hint
 from speech import text_to_speech
 from utils import draw_button
+
+def render_text_with_background(screen, text_surface, center_pos, background_image, padding=20):
+    """Render text with a scaled background image behind it."""
+    text_rect = text_surface.get_rect(center=center_pos)
+    # Scale background to fit text with padding
+    bg_width = text_rect.width + 2 * padding
+    bg_height = text_rect.height + 2 * padding
+    scaled_bg = pygame.transform.scale(background_image, (bg_width, bg_height))
+    bg_rect = scaled_bg.get_rect(center=center_pos)
+    # Blit background, then text
+    screen.blit(scaled_bg, bg_rect)
+    screen.blit(text_surface, text_rect)
 
 def run_game(screen, language):
     try:
@@ -116,8 +128,8 @@ def new_view(screen, points, found_clues, language, level):
         while running:
             try:
                 screen.blit(pygame.transform.scale(new_background_image, (WIDTH, HEIGHT)), (0, 0))
-                mission_text = mission_font.render(get_translation("Mission", "Mission"), True, (0, 255, 255))
-                screen.blit(mission_text, mission_text.get_rect(center=(WIDTH // 2, 50)))
+                mission_text = mission_font.render(get_translation("Mission", "Mission"), True, BLACK)
+                render_text_with_background(screen, mission_text, (WIDTH // 2, 50), text_back)
 
                 for i, pos in enumerate(pin_positions):
                     pin_color = (255, 215, 0) if i == current_pin_index else (150, 150, 150)
@@ -135,7 +147,7 @@ def new_view(screen, points, found_clues, language, level):
                 points_box = pygame.Rect(0, 0, 150, 40)
                 points_box.center = (WIDTH - 100, 100)
                 pygame.draw.rect(screen, LIGHT_GRAY, points_box, border_radius=5)
-                points_text = font.render(f"{translations[language]['Points']}: {points}", True, WHITE)
+                points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
                 screen.blit(points_text, points_text.get_rect(center=points_box.center))
 
                 obj_x, obj_y = WIDTH - WIDTH // 4, 150
@@ -296,8 +308,8 @@ def suspect_background_view(screen, language, level):
 
     while running:
         screen.blit(pygame.transform.scale(detective_bg1, (WIDTH, HEIGHT)), (0, 0))
-        title_text = title_font.render(translations[language]["Explore Suspect Background"], True, WHITE)
-        screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, 50)))
+        title_text = title_font.render(translations[language]["Explore Suspect Background"], True, BLACK)
+        render_text_with_background(screen, title_text, (WIDTH // 2, 50), text_back)
 
         for i, pos in enumerate(suspect_positions):
             screen.blit(pygame.transform.scale(suspect_image, (70, 100)), pos)
@@ -375,7 +387,7 @@ def hall_view(screen, points, language, pin_index):
         translations[language]["Move to the yellow light"],
         translations[language]["Move to the yellow light"]
     ]
-    instruction = font.render(instruction_texts[pin_index], True, (0, 255, 255))
+    instruction = font.render(instruction_texts[pin_index], True, BLACK)
     
     running = True
     clock = pygame.time.Clock()
@@ -389,8 +401,8 @@ def hall_view(screen, points, language, pin_index):
         pygame.draw.rect(light_surface, (255, 255, 0, glow_alpha), (0, 0, 50, 50), border_radius=5)
         screen.blit(light_surface, light_rect)
         screen.blit(avatar, avatar_rect)
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        render_text_with_background(screen, instruction, (WIDTH // 2, 50), text_back)
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
 
         pygame.display.flip()
@@ -431,14 +443,14 @@ def puzzle_view_1(screen, points, language, level):
         # Level 1: Regular tic-tac-toe
         grid = [[None for _ in range(3)] for _ in range(3)]
         cell_rects = [pygame.Rect(WIDTH // 2 - 90 + x * 60, HEIGHT // 2 - 90 + y * 60, 50, 50) for y in range(3) for x in range(3)]
-        instruction = font.render("Get 3 X's in a row", True, (0, 255, 255))
+        instruction = font.render("Get 3 X's in a row", True, BLACK)
         player_char = 'X'
         ai_char = 'O'
     else:
         # Level 2: 4x4 tic-tac-toe with diagonal win
         grid = [[None for _ in range(4)] for _ in range(4)]
         cell_rects = [pygame.Rect(WIDTH // 2 - 120 + x * 60, HEIGHT // 2 - 120 + y * 60, 50, 50) for y in range(4) for x in range(4)]
-        instruction = font.render("Get 3 O's in a diagonal", True, (0, 255, 255))
+        instruction = font.render("Get 3 O's in a diagonal", True, BLACK)
         player_char = 'O'
         ai_char = 'X'
     
@@ -562,9 +574,9 @@ def puzzle_view_1(screen, points, language, level):
                 text = font.render('O', True, RED)
                 screen.blit(text, text.get_rect(center=rect.center))
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150)))
+        render_text_with_background(screen, instruction, (WIDTH // 2, HEIGHT // 2 - 150), text_back)
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
 
         if message_text and message_timer > 0:
@@ -640,7 +652,7 @@ def puzzle_view_2(screen, points, language, level):
             [13, 14, 15, None]
         ]
         target_piece = 15
-        instruction = font.render(f"Slide to move piece {target_piece} to center", True, (0, 255, 255))
+        instruction = font.render(f"Slide to move piece {target_piece} to center", True, BLACK)
     else:
         # Level 2: 5x5 sliding puzzle with multiple targets
         grid = [
@@ -651,7 +663,7 @@ def puzzle_view_2(screen, points, language, level):
             [21, 22, 23, 24, None]
         ]
         target_pieces = [13, 14, 15]  # Need to get any of these to center
-        instruction = font.render("Slide to move any target piece to center", True, (0, 255, 255))
+        instruction = font.render("Slide to move any target piece to center", True, BLACK)
     
     tile_size = 50 if level == 1 else 40
     spacing = 10 if level == 1 else 5
@@ -718,9 +730,9 @@ def puzzle_view_2(screen, points, language, level):
                     text = font.render(str(grid[y][x]), True, WHITE)
                     screen.blit(text, text.get_rect(center=rect.center))
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 180)))
+        render_text_with_background(screen, instruction, (WIDTH // 2, HEIGHT // 2 - 180), text_back)
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
 
         if message_text and message_timer > 0:
@@ -817,7 +829,7 @@ def puzzle_view_3(screen, points, language, level):
     puzzle_solved = False
     hint = get_smart_hint([], points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, (0, 255, 255))
-    instruction = font.render("Match all pairs" + (" (with time limit)" if level == 2 else ""), True, (0, 255, 255))
+    instruction = font.render("Match all pairs" + (" (with time limit)" if level == 2 else ""), True, BLACK)
     running = True
     clock = pygame.time.Clock()
     
@@ -833,9 +845,9 @@ def puzzle_view_3(screen, points, language, level):
         screen.blit(overlay, (0, 0))
         screen.blit(puzzle_bg, puzzle_bg_rect)
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 200)))
+        render_text_with_background(screen, instruction, (WIDTH // 2, HEIGHT // 2 - 200), text_back)
         screen.blit(hint_text, hint_text.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
         
         if level == 2:
@@ -956,7 +968,7 @@ def pin_view_1(screen, points, found_clues, language, level):
     clue_found = False
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, (0, 255, 255))
-    instruction = font.render(translations[language]["Objective1_Level" + str(level)], True, (0, 255, 255))
+    instruction = font.render(translations[language]["Objective1_Level" + str(level)], True, BLACK)
     running = True
     clock = pygame.time.Clock()
 
@@ -977,15 +989,15 @@ def pin_view_1(screen, points, found_clues, language, level):
             screen.blit(glow_surface, (clue_rect.x - max_glow + glow_radius, clue_rect.y - max_glow + glow_radius))
             screen.blit(clue_surface, clue_rect)
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        render_text_with_background(screen, instruction, (WIDTH // 2, 50), text_back)
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
         hint_surface = hint_text
         hint_surface.set_alpha(hint_alpha)
         screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT - 50)))
 
         if message_text and message_timer > 0:
-            message_surface = clue_font.render(message_text, True, (0, 255, 255))
+            message_surface = clue_font.render(message_text, True, BLACK)
             message_surface.set_alpha(message_alpha)
             message_rect = message_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             pygame.draw.rect(screen, DARK_GRAY, message_rect.inflate(20, 20), border_radius=10)
@@ -1047,7 +1059,7 @@ def pin_view_2(screen, points, found_clues, language, level):
     clue_found = False
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, (0, 255, 255))
-    instruction = font.render(translations[language]["Objective2_Level" + str(level)], True, (0, 255, 255))
+    instruction = font.render(translations[language]["Objective2_Level" + str(level)], True, BLACK)
     running = True
     clock = pygame.time.Clock()
 
@@ -1068,15 +1080,15 @@ def pin_view_2(screen, points, found_clues, language, level):
             screen.blit(glow_surface, (clue_rect.x - max_glow + glow_radius, clue_rect.y - max_glow + glow_radius))
             screen.blit(clue_surface, clue_rect)
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        render_text_with_background(screen, instruction, (WIDTH // 2, 50), text_back)
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
         hint_surface = hint_text
         hint_surface.set_alpha(hint_alpha)
         screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT - 50)))
 
         if message_text and message_timer > 0:
-            message_surface = clue_font.render(message_text, True, (0, 255, 255))
+            message_surface = clue_font.render(message_text, True, BLACK)
             message_surface.set_alpha(message_alpha)
             message_rect = message_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             pygame.draw.rect(screen, DARK_GRAY, message_rect.inflate(20, 20), border_radius=10)
@@ -1138,7 +1150,7 @@ def pin_view_3(screen, points, found_clues, language, level):
     clue_found = False
     hint = get_smart_hint(found_clues, points, language)
     hint_text = font.render(hint if hint != "Processing..." else "Processing...", True, (0, 255, 255))
-    instruction = font.render(translations[language]["Objective3_Level" + str(level)], True, (0, 255, 255))
+    instruction = font.render(translations[language]["Objective3_Level" + str(level)], True, BLACK)
     running = True
     clock = pygame.time.Clock()
 
@@ -1159,15 +1171,15 @@ def pin_view_3(screen, points, found_clues, language, level):
             screen.blit(glow_surface, (clue_rect.x - max_glow + glow_radius, clue_rect.y - max_glow + glow_radius))
             screen.blit(clue_surface, clue_rect)
         
-        screen.blit(instruction, instruction.get_rect(center=(WIDTH // 2, 50)))
-        points_text = font.render(f"{translations[language]['Points']}: {points}", True, (0, 255, 255))
+        render_text_with_background(screen, instruction, (WIDTH // 2, 50), text_back)
+        points_text = font.render(f"{translations[language]['Points']}: {points}", True, BLACK)
         screen.blit(points_text, points_text.get_rect(center=(WIDTH - 100, 20)))
         hint_surface = hint_text
         hint_surface.set_alpha(hint_alpha)
         screen.blit(hint_surface, hint_surface.get_rect(center=(WIDTH // 2, HEIGHT - 50)))
 
         if message_text and message_timer > 0:
-            message_surface = clue_font.render(message_text, True, (0, 255, 255))
+            message_surface = clue_font.render(message_text, True, BLACK)
             message_surface.set_alpha(message_alpha)
             message_rect = message_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             pygame.draw.rect(screen, DARK_GRAY, message_rect.inflate(20, 20), border_radius=10)
